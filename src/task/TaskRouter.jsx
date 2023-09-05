@@ -1,7 +1,7 @@
 import { Center, Container } from "@chakra-ui/react"
 import { Navigate, Route, Routes } from "react-router-dom"
 
-import { Header } from "./components/Header"
+import Header from "./components/Header"
 import { Guard } from "../auth/utils/Guard"
 import TasksPage from "./Pages/TasksPage"
 import { ProfilePage } from "./Pages/ProfilePage"

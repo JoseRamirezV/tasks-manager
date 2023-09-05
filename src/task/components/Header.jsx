@@ -1,4 +1,14 @@
-import { Box, Container, Flex, Link, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Link,
+  Text,
+  HStack,
+  useDisclosure,
+  Stack,
+} from "@chakra-ui/react";
+import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
+import { RxHamburgerMenu } from "react-icons/rx";
 import { useContext } from "react";
 import { Link as LinkRD } from "react-router-dom";
 import { AuthContext } from "../../auth/context/AuthContext";
@@ -7,32 +17,58 @@ import { AuthContext } from "../../auth/context/AuthContext";
  * @description Se encarga de renderizar la barra de navegación prinpal del modulo de tareas.
  * @author HaroldsCode
  */
-export const Header = () => {
-
+export default function Header() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { name, logout } = useContext(AuthContext);
 
   return (
-    <Container
+    <Box
+      bg={isOpen ? "gray.100" : "none"}
+      px={4}
       as="header"
       maxW={"3xl"}
-      p={"3"}
-      bgColor={"#0f0"}
-      display={"flex"}
-      flexDir={"row"}
-      flexWrap={"nowrap"}
-      alignItems={"center"}
-      justifyContent={"space-between"}
+      mx={"auto"}
     >
-      <Link as={LinkRD} to="/">
-        <Text fontWeight={'600'}>Taskty.co</Text>
-      </Link>
-      <Box as="nav">
-        <Flex flexDir={'row'}  flexDirection={'row'} flexWrap={'nowrap'} gap={'1rem'}>
-            <Link as={LinkRD} to={''}>Tareas</Link>
-            <Link as={LinkRD} to={'profile'}>{name}</Link>
-        </Flex>
-      </Box>
-      <Link onClick={logout}>Cerrar Sesión</Link>
-    </Container>
+      <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
+        <Box display={{md: 'none'}}>
+          {isOpen ? (
+            <AiOutlineClose onClick={isOpen ? onClose : onOpen} />
+          ) : (
+            <RxHamburgerMenu onClick={isOpen ? onClose : onOpen} />
+          )}
+        </Box>
+        <HStack spacing={8} alignItems={"center"}>
+          <Link as={LinkRD} to="/">
+            <Text fontWeight={"600"} color={'blue.400'}>Taskty.co</Text>
+          </Link>
+          <HStack
+            as={"nav"}
+            spacing={4}
+            display={{ base: "none", md: "flex" }}
+          >
+            <Link as={LinkRD} to={""}>
+              Tareas
+            </Link>
+            <Link as={LinkRD} to={"profile"}>
+              {name}
+            </Link>
+          </HStack>
+        </HStack>
+        <Link as={AiOutlineLogout} onClick={logout}></Link>
+      </Flex>
+
+      {isOpen ? (
+        <Box pb={4} display={{ md: "none" }}>
+          <Stack as={"nav"} spacing={4}>
+            <Link as={LinkRD} to={""}>
+              Tareas
+            </Link>
+            <Link as={LinkRD} to={"profile"}>
+              {name}
+            </Link>
+          </Stack>
+        </Box>
+      ) : null}
+    </Box>
   );
-};
+}
