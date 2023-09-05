@@ -9,6 +9,7 @@ export default function ListItem(props) {
   const collapse = () => {
     setCollapsed(!collapsed);
   };
+
   return (
     <div className="task">
       <div className="priority">
