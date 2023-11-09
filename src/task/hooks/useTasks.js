@@ -14,13 +14,13 @@ const useTasks = () => {
     return response.json()
   })
   .then((data) => {
-    if (data.lenght === 0) return data;
+    if (data.length === 0) return data;
 
-    return data.map((taks) => ({
-      id:taks.id,
-      title:taks.title,
-      description:taks.description,
-      leftDays:calcDate(taks.limitDate),
+    return data.map((task) => ({
+      id:task.id,
+      title:task.title,
+      description:task.description,
+      leftDays:calcDate(task.limitDate),
     }))
   })
   .catch(err => {

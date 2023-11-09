@@ -19,7 +19,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { Link as LinkRD } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
-export default function SignupPage() {
+export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
 
   return (

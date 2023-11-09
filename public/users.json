@@ -1,0 +1,14 @@
+[
+    {
+        "name": "admin",
+        "cellphone": "1234",
+        "password": "admin",
+        "token": "FD564DS5F64AS5FD6545656fds4654df5g46f"
+    },
+    {
+        "name": "Harold",
+        "cellphone": "12345",
+        "password": "admin",
+        "token": "FD564DS5F64AS5FD6545656fds4654df5g46f"
+    }
+]

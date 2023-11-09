@@ -4,7 +4,7 @@ import { createContext, useReducer } from "react"
  * @description Estado inicial y objeto que define el contexto de autenticación
  */
 export const InitialState = {
-  name:'',
+  cellphone:'',
   token: '',
   isLogged: false
 }
@@ -18,8 +18,8 @@ export const AuthContext = createContext(InitialState)
 
 /**
  * @function reducer
- * @description Manupula el estado de la autentcación de los usuarios
- * @param {InitialState} state estadp de la autrización de os usuarios
+ * @description Manipula el estado de la autenticación de los usuarios
+ * @param {InitialState} state estado de la autorización de os usuarios
  * @param {{payload: InitialState, type: ''}} action tipo de acción a realizar e información a cambiar
  * @returns {InitialState} nuevo estado de la autenticación
 */
@@ -33,13 +33,13 @@ export function reducer(state, action) {
 }
 
 // eslint-disable-next-line react/prop-types
-export function AuthContextPovider({children}){
+export function AuthContextProvider({children}){
   const [state, dispatch] = useReducer(reducer, InitialState)
 
-  function login(userSesion){
+  function login(userSession){
     dispatch({
       type: 'LOGIN',
-      payload: userSesion
+      payload: userSession
     })
   }
 
