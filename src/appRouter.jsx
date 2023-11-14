@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { TaskRouter } from "./task/TaskRouter";
-import { AuthContextProvider } from "./auth/context/AuthContext";
+import { AuthContextProvider } from "./context/AuthContext";
 import { AuthRouter } from "./auth/AuthRouter";
 import { Helmet } from "react-helmet-async";
 

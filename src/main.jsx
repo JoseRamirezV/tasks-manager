@@ -1,16 +1,13 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { ChakraProvider } from '@chakra-ui/react'
+import { ChakraProvider } from "@chakra-ui/react";
+import ReactDOM from "react-dom/client";
 
-import AppRouter from './appRouter.jsx'
-import { HelmetProvider } from 'react-helmet-async'
+import { HelmetProvider } from "react-helmet-async";
+import AppRouter from "./appRouter.jsx";
 
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <ChakraProvider>
-      <HelmetProvider>
-        <AppRouter />
-      </HelmetProvider>
-    </ChakraProvider>
-  </React.StrictMode>,
-)
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <ChakraProvider>
+    <HelmetProvider>
+      <AppRouter />
+    </HelmetProvider>
+  </ChakraProvider>
+);

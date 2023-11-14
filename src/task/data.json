@@ -1,0 +1,58 @@
+[
+  {
+    "_id": "f47b5d72-4cf6-4f85-8df8-1a3a2e5fb9bc",
+    "userId": "1",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-05"
+  },
+  {
+    "_id": "9e0b82d3-52a6-4a2f-9613-08c0e9b5f0b0",
+    "userId": "1",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-08"
+  },
+  {
+    "_id": "7d1f6b01-6d59-49ea-8e79-9860d7316b8f",
+    "userId": "1",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-09"
+  },
+  {
+    "_id": "2a6b61e0-9f6e-481d-a3d4-cbfaa9f23b10",
+    "userId": "2",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-10"
+  },
+  {
+    "_id": "5fcb036f-6c42-4aa0-8546-991d8e041acc",
+    "userId": "2",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-09"
+  },
+  {
+    "_id": "1d8a93d7-5d90-4da3-bb01-d200ef580a1c",
+    "userId": "2",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-09"
+  },
+  {
+    "_id": "d94751e4-1049-4f61-9ea6-3bc74acaa40f",
+    "userId": "2",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-06"
+  },
+  {
+    "_id": "8c58c5c1-2d8c-4e9a-86c2-ff6b87ab0e4a",
+    "userId": "2",
+    "title": "Ir de compras",
+    "description": "- Arroz/n- Crema",
+    "limitDate": "2023-09-09"
+  }
+]

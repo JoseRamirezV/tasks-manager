@@ -11,7 +11,7 @@ import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useContext } from "react";
 import { Link as LinkRD } from "react-router-dom";
-import { AuthContext } from "../../auth/context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 /**
  * @function Header
  * @description Se encarga de renderizar la barra de navegación prinpal del modulo de tareas.
@@ -30,7 +30,7 @@ export default function Header() {
       mx={"auto"}
     >
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-        <Box display={{md: 'none'}}>
+        <Box display={{ md: "none" }}>
           {isOpen ? (
             <AiOutlineClose onClick={isOpen ? onClose : onOpen} />
           ) : (
@@ -39,18 +39,16 @@ export default function Header() {
         </Box>
         <HStack spacing={8} alignItems={"center"}>
           <Link as={LinkRD} to="/">
-            <Text fontWeight={"600"} color={'blue.400'}>Taskty.co</Text>
+            <Text fontWeight={"600"} color={"blue.400"}>
+              Taskty.co
+            </Text>
           </Link>
-          <HStack
-            as={"nav"}
-            spacing={4}
-            display={{ base: "none", md: "flex" }}
-          >
+          <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+            <Link as={LinkRD} to={"profile"} fontWeight='bold'>
+              {name}
+            </Link>
             <Link as={LinkRD} to={""}>
               Tareas
-            </Link>
-            <Link as={LinkRD} to={"profile"}>
-              {name}
             </Link>
           </HStack>
         </HStack>

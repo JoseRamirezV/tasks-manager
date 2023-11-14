@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext";
 import { getUser } from "../services/users";
 import { toast } from "sonner";
 
@@ -17,14 +17,13 @@ export function useLogin() {
     return () => {
       setError(null);
     };
-  }, [error]);
+  });
 
   const authenticateUser = async (cellphone, password) => {
     if (isNaN(cellphone)) {
       setError("Debe ingresar un numero de teléfono, nada de letras");
       return;
     }
-
     const userFound = await getUser(cellphone, password);
     if (!userFound) {
       setError(
@@ -32,9 +31,11 @@ export function useLogin() {
       );
       return;
     }
-    const { token } = userFound;
+    const { _id: id, name, token } = userFound;
     login({
+      id,
       cellphone,
+      name,
       token,
       isLogged: true,
     });

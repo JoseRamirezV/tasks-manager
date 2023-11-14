@@ -1,8 +1,11 @@
 import { Link as LinkRD } from "react-router-dom";
+import { useState } from "react";
 import { useLogin } from "../hooks/useLogIn";
+
 import {
   Box,
   Button,
+  IconButton,
   Flex,
   FormControl,
   FormLabel,
@@ -17,8 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
 import { Toaster } from "sonner";
-import { EyeIcon, EyeSlashIcon } from "../components/Icons";
-import { useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
 
 const LoginPage = () => {
   const { authenticateUser } = useLogin();
@@ -68,16 +70,17 @@ const LoginPage = () => {
                       name="password"
                     />
                     <InputRightElement>
-                      <Button
+                      <IconButton 
                         onClick={() =>
                           setShowPassword(!showPassword)
                         }
                         p={2}
                         size="sm"
                         variant='ghost'
-                      >
-                        {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
-                      </Button>
+                        aria-label="Toggle password visibility"
+                        isRound
+                        icon={showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                      />
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
