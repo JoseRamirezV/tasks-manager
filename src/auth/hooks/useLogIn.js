@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import { getUser } from "../services/users";
+import { AuthContext } from "@/context/AuthContext";
+import { login as loginService } from "@/auth/services/users";
 import { toast } from "sonner";
 
 export function useLogin() {
@@ -24,20 +24,21 @@ export function useLogin() {
       setError("Debe ingresar un numero de teléfono, nada de letras");
       return;
     }
-    const userFound = await getUser(cellphone, password);
-    if (!userFound) {
+    const {user, token, error} = await loginService(cellphone, password);
+    if (error) {
       setError(
         "Credenciales incorrectas, por favor verifique su usuario o contraseña"
       );
       return;
     }
-    const { _id: id, name, token } = userFound;
+    window.localStorage.setItem('token', token)
+    const { _id: id, user: name } = user;
     login({
       id,
       cellphone,
       name,
       token,
-      isLogged: true,
+      isLogged: true
     });
   };
 

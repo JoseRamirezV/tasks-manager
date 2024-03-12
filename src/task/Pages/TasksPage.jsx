@@ -12,10 +12,9 @@ import {
 import { Helmet } from "react-helmet-async";
 import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 
-import { TaskCard } from "../components/TaskCard";
-import { TaskForm } from "../components/TaskForm";
-import useTasks from "../hooks/useTasks";
-import { useEffect } from "react";
+import { TaskCard } from "@/task/components/TaskCard";
+import { TaskForm } from "@/task/components/TaskForm";
+import useTasks from "@/task/hooks/useTasks";
 
 const TasksPage = () => {
   const { addTask, editTask, deleteTasks, checkItem, checkAllItems, data, checkedItems } =
@@ -25,14 +24,10 @@ const TasksPage = () => {
   const allChecked = checkedItems.every((task) => task.checked === true);
   const isIndeterminate =
     checkedItems.some((task) => task.checked === true) && !allChecked;
-
+    
   const handleCheckAll = (e) => {
     checkAllItems(e.target.checked);
   };
-
-  useEffect(() => {
-    console.log("render");
-  });
 
   return (
     <>

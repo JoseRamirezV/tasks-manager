@@ -1,5 +1,6 @@
 import moment from "moment/moment";
-import tasksList from "../data.json";
+
+const URL = "http://localhost:5000/api/tasks";
 
 function calcDate(limitDate) {
   let limit = moment(limitDate, "YYYY-MM-DD");
@@ -8,66 +9,72 @@ function calcDate(limitDate) {
   return Math.trunc((limit.diff(today, "hours") + 24) / 24);
 }
 
-export const getUserTasks = async (id) => {
-  // const res = await fetch("../data.json", {
-  //   headers: { "Content-Type": "application/json", Accept: "application/json" },
-  // });
-  // if (!res.ok) return;
-  // const data = await res.json();
+function getToken() {
+  return window.localStorage.getItem("token") || "";
+}
 
-  // if (data.length === 0) return data;
-
-  // return data.reduce((acc, task) => {
-  //   if (task.userId === id) {
-  //     return acc.concat({
-  //       id: task._id,
-  //       title: task.title,
-  //       description: task.description,
-  //       daysLeft: calcDate(task.limitDate),
-  //     });
-  //   }
-  //   return acc;
-  // }, []);
-  return tasksList.reduce((acc, task) => {
-    if (task.userId === id) {
-      return acc.concat({
-        id: task._id,
-        userId: task.userId,
-        title: task.title,
-        description: task.description,
-        limitDate: task.limitDate,
-        daysLeft: calcDate(task.limitDate),
-      });
-    }
-    return acc;
+export const getUserTasks = async (userId) => {
+  const token = getToken();
+  const res = await fetch(`${URL}/${userId}`, {
+    headers: { authorization: `Bearer ${token}` },
+  });
+  const tasks = await res.json();
+  return tasks.reduce((acc, task) => {
+    return acc.concat({
+      id: task._id,
+      title: task.title,
+      description: task.description,
+      limitDate: moment(task.limitDate).format("YYYY-MM-DD"),
+      daysLeft: calcDate(task.limitDate),
+      notificationDate: task.notificationDate,
+      notify: task.notify,
+      notified: task.notified,
+    });
   }, []);
 };
 
-export const addNewTask = async ({ userId, title, description, limitDate }) => {
-  try {
-    const res = {ok: 'ok'}
-    if(!res.ok) throw new Error('Hubo un problema')
-    const id = crypto.randomUUID();
-    const newTask = {
-      id,
-      userId,
-      title,
-      description,
-      limitDate,
-      daysLeft: calcDate(limitDate),
-    };
-    return newTask;
-  } catch (err) {
-    console.log(err);
-  }
+export const addNewTask = async (task) => {
+  const token = getToken();
+  const res = await fetch(`${URL}/add`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(task),
+  });
+  const { error, id } = await res.json();
+  const daysLeft = calcDate(task.limitDate);
+  return { error, id, daysLeft };
 };
 
-export const deleteTasks = (taskId) => {
-  if (!taskId) return
-  return {ok: 'Task deleted'};
+export const deleteTasks = async (tasks) => {
+  const token = getToken();
+  if (!tasks) return;
+  const res = await fetch(`${URL}/delete`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(tasks),
+  });
+  const { error } = await res.json();
+  return { error };
 };
 
-export const updateTask = (task) => {
-  task.daysLeft = calcDate(task.limitDate)
-  return task
-}
+export const updateTask = async (task) => {
+  const token = getToken();
+  const { id } = task;
+  const res = await fetch(`${URL}/update/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(task),
+  });
+  const { error } = await res.json();
+  task.daysLeft = calcDate(task.limitDate);
+  return { error, task };
+};

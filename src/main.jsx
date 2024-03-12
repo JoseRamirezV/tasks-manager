@@ -2,7 +2,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import ReactDOM from "react-dom/client";
 
 import { HelmetProvider } from "react-helmet-async";
-import AppRouter from "./appRouter.jsx";
+import AppRouter from "@/appRouter.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <ChakraProvider>

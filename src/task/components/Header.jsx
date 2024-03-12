@@ -11,7 +11,7 @@ import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useContext } from "react";
 import { Link as LinkRD } from "react-router-dom";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 /**
  * @function Header
  * @description Se encarga de renderizar la barra de navegación prinpal del modulo de tareas.
@@ -19,7 +19,7 @@ import { AuthContext } from "../../context/AuthContext";
  */
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { name, logout } = useContext(AuthContext);
+  const { id, name, logout } = useContext(AuthContext);
 
   return (
     <Box
@@ -38,7 +38,7 @@ export default function Header() {
           )}
         </Box>
         <HStack spacing={8} alignItems={"center"}>
-          <Link as={LinkRD} to="/">
+          <Link as={LinkRD} to={`/${id}`}>
             <Text fontWeight={"600"} color={"blue.400"}>
               Taskty.co
             </Text>
@@ -47,7 +47,7 @@ export default function Header() {
             <Link as={LinkRD} to={"profile"} fontWeight='bold'>
               {name}
             </Link>
-            <Link as={LinkRD} to={""}>
+            <Link as={LinkRD} to={`/${id}`}>
               Tareas
             </Link>
           </HStack>

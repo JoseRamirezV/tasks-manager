@@ -1,6 +1,6 @@
-import { Link as LinkRD } from "react-router-dom";
-import { useState } from "react";
-import { useLogin } from "../hooks/useLogIn";
+import { Link as LinkRD, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useLogin } from "@/auth/hooks/useLogIn";
 
 import {
   Box,
@@ -19,12 +19,21 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
-import { Toaster } from "sonner";
-import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai'
+import { Toaster, toast } from "sonner";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 const LoginPage = () => {
   const { authenticateUser } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const { error } = useLocation();
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Error", {
+        description: error,
+      });
+    }
+  }, []);
 
   function handleLogin(event) {
     event.preventDefault();
@@ -60,7 +69,7 @@ const LoginPage = () => {
               <Stack spacing={4}>
                 <FormControl id="phoneNumber" isRequired>
                   <FormLabel>Número de teléfono</FormLabel>
-                  <Input type="tel" name="cellphone" autoComplete="off" />
+                  <Input type="number" name="cellphone" autoComplete="off" />
                 </FormControl>
                 <FormControl id="password" isRequired>
                   <FormLabel>Contraseña</FormLabel>
@@ -70,16 +79,20 @@ const LoginPage = () => {
                       name="password"
                     />
                     <InputRightElement>
-                      <IconButton 
-                        onClick={() =>
-                          setShowPassword(!showPassword)
-                        }
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
                         p={2}
                         size="sm"
-                        variant='ghost'
+                        variant="ghost"
                         aria-label="Toggle password visibility"
                         isRound
-                        icon={showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                        icon={
+                          showPassword ? (
+                            <AiOutlineEyeInvisible />
+                          ) : (
+                            <AiOutlineEye />
+                          )
+                        }
                       />
                     </InputRightElement>
                   </InputGroup>
@@ -116,7 +129,7 @@ const LoginPage = () => {
             </form>
           </Box>
         </Stack>
-        <Toaster richColors closeButton position="top-center"/>
+        <Toaster richColors closeButton position="top-center" />
       </Flex>
     </>
   );

@@ -1,26 +1,12 @@
-import usersList from '../users.json'
+const URL = 'http://localhost:5000/api/users'
 
-export const getUser = async (cellphone, password) => {
-    try {
-        // const res = await fetch("/users.json", {
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     Accept: "application/json",
-        //   },
-        // });
-    
-        // if (!res.ok) return false;
-    
-        // const data = await res.json();
-        // const userData = data.find(
-        //   (user) => user.cellphone === cellphone && user.password === password
-        // );
-        const userData = usersList.find(
-          (user) => user.cellphone === cellphone && user.password === password
-        );
-        return userData;
-      } catch (err) {
-        console.log(err);
-        return [];
-      }
+export const login = async (cellphone, password) => {
+  const res = await fetch(`${URL}/${cellphone}&${password}`);
+  const { token, user, error } = await res.json();
+  return { user, token, error };
+};
+
+export const isAuthenticated = async (token) => {
+  const res = await fetch(`${URL}/isLogged/${token}`)
+  return await res.json()
 }

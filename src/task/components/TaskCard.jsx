@@ -16,7 +16,7 @@ import { AiOutlineEdit } from "react-icons/ai";
 
 import PropTypes from "prop-types";
 import { useEffect } from "react";
-import { TaskForm } from "./TaskForm";
+import { TaskForm } from "@/task/components/TaskForm";
 
 /**
  *
@@ -29,9 +29,8 @@ export const TaskCard = ({
   index,
   checkItem,
   checkedItems,
-  editTask
+  editTask,
 }) => {
-  
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     isOpen: modal,
@@ -60,7 +59,7 @@ export const TaskCard = ({
     onClose();
   };
 
-  const handleMouseOver = () => {
+  const handleMouseEnter = () => {
     onOpen();
     editFadeOn();
   };
@@ -78,7 +77,7 @@ export const TaskCard = ({
   return (
     <>
       <Card
-        onMouseOver={handleMouseOver}
+        onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onClick={() => handleClick(task.id)}
         position={"relative"}
@@ -141,7 +140,12 @@ export const TaskCard = ({
           </Button>
         </Fade>
       </Card>
-      <TaskForm isOpen={modal} onClose={closeModal} taskToEditData={task} editTask={editTask}/>
+      <TaskForm
+        isOpen={modal}
+        onClose={closeModal}
+        taskToEditData={task}
+        editTask={editTask}
+      />
     </>
   );
 };
