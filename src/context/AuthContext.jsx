@@ -6,7 +6,7 @@ import { createContext, useReducer } from "react";
  */
 export const InitialState = {
   id: "",
-  cellphone: "",
+  email: "",
   name: "",
   token: "",
   password: "",
@@ -33,10 +33,9 @@ function reducer(state, action) {
     case "LOGIN":
       return { ...action.payload };
     case "LOGOUT":
-      window.localStorage.removeItem('token')
       return structuredClone(InitialState);
     default:
-      throw Error("Unknown action: " + action.type);
+      throw Error(`Unknown action: ${action.type}`);
   }
 }
 

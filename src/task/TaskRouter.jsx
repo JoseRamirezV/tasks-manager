@@ -1,29 +1,35 @@
 import { Center, Container } from "@chakra-ui/react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
-import { isAuthenticated } from "@/auth/services/users";
+import guard from "@/auth/utils/guard";
 import { AuthContext } from "@/context/AuthContext";
-import { useContext, useEffect } from "react";
 import { ProfilePage } from "@/task/Pages/ProfilePage";
 import TasksPage from "@/task/Pages/TasksPage";
 import Header from "@/task/components/Header";
+import { useContext } from "react";
 
 export const TaskRouter = () => {
-  const { logout } = useContext(AuthContext);
+  const { logout, login, id } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const token = window.localStorage.getItem("token");
-    if (!token) {
-      logout()
-      return navigate("/auth/sign-in",{ state: { error: "Tiempo de espera superado, por favor vuelva a iniciar sesión" } })
+  guard().then((res) => {
+    if (!res || res?.error) {
+      logout();
+      navigate("/auth/sign-in", {
+        state: res && {
+          error: res.error,
+        },
+      });
+    } else if (id === "") {
+      const { id, name, email, token } = res;
+      login({
+        id,
+        email,
+        name,
+        token,
+        isLogged: true,
+      });
     }
-    isAuthenticated(token).then((authenticated) => {
-      if (!authenticated) {
-        logout()
-        return navigate("/auth/sign-in",{ error: "Tiempo de espera superado, por favor vuelva a iniciar sesión" })
-      }
-    });
   });
 
   return (
@@ -31,7 +37,7 @@ export const TaskRouter = () => {
       <Header />
       <Container as="main" maxW={"3xl"} position={"relative"}>
         <Routes>
-          <Route path="/:id" element={<TasksPage />} />
+          <Route path="/" element={<TasksPage />} />
           <Route path={"profile"} exact element={<ProfilePage />} />
           <Route path={"*"} exact element={<Navigate to={""} />} />
         </Routes>

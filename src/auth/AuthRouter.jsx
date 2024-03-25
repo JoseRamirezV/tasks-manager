@@ -9,14 +9,13 @@ import SignUpPage from "@/auth/pages/SignUpPage";
 import { isAuthenticated } from "@/auth/services/users";
 
 export const AuthRouter = () => {
-  const { isLogged, id } = useContext(AuthContext);
+  const { isLogged, token } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = window.localStorage.getItem("token");
     if (!token) return;
     isAuthenticated(token).then((authenticated) => {
-      if (authenticated && isLogged) navigate(`/${id}`);
+      if (authenticated && isLogged) navigate("/");
     });
   });
 

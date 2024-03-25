@@ -5,15 +5,15 @@ import { AuthContext } from "@/context/AuthContext";
 import { MyEditableInput } from "@/task/components/MyEditableInput";
 
 export const ProfilePage = () => {
-  const { name, cellphone } = useContext(AuthContext);
+  const { name, email } = useContext(AuthContext);
 
   const handleSaveChanges = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const { name, phone, password } = Object.fromEntries(
+    const { name, email, password } = Object.fromEntries(
       new window.FormData(form)
     );
-    console.log({ name, phone, password });
+    console.log({ name, email, password });
   };
 
   return (
@@ -30,9 +30,9 @@ export const ProfilePage = () => {
               name="name"
             />
             <MyEditableInput
-              defaultValue={cellphone}
+              defaultValue={email}
               label="Numero de teléfono"
-              name="phone"
+              name="email"
               type="tel"
             />
             <MyEditableInput

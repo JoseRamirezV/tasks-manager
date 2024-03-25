@@ -38,7 +38,7 @@ export default function ForgotPassPage() {
           <FormControl id="email">
             <Input
               textAlign={'center'}
-              placeholder="3161581011"
+              placeholder="example@mail.com"
               _placeholder={{ color: 'gray.500' }}
               type="email"
             />

@@ -1,47 +1,45 @@
-import { Link as LinkRD, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
 import { useLogin } from "@/auth/hooks/useLogIn";
+import { useEffect, useState } from "react";
+import { Link as LinkRD, useLocation } from "react-router-dom";
 
 import {
   Box,
   Button,
-  IconButton,
   Flex,
   FormControl,
   FormLabel,
   Heading,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Link,
-  Stack,
   Text,
-  useColorModeValue,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
-import { Toaster, toast } from "sonner";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Toaster, toast } from "sonner";
 
 const LoginPage = () => {
   const { authenticateUser } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
-  const { error } = useLocation();
+  const { state } = useLocation();
 
   useEffect(() => {
-    if (error) {
+    if (state?.error) {
       toast.error("Error", {
-        description: error,
+        description: state.error,
       });
+      state.error = undefined
     }
   }, []);
 
   function handleLogin(event) {
     event.preventDefault();
     const form = event.currentTarget;
-    const { cellphone, password } = Object.fromEntries(
-      new window.FormData(form)
-    );
-    authenticateUser(cellphone, password);
+    const { email, password } = Object.fromEntries(new window.FormData(form));
+    authenticateUser(email, password);
   }
 
   return (
@@ -49,30 +47,32 @@ const LoginPage = () => {
       <Helmet>
         <title>Iniciar sesión | Taskty</title>
       </Helmet>
-      <Flex minH={"100vh"} align={"center"} justify={"center"}>
-        <Stack spacing={6} mx={"auto"} maxW={"lg"} py={12} px={6}>
-          <Stack align={"center"}>
-            <Heading as="h1" fontSize={"4xl"}>
-              Taskty.co
-            </Heading>
-            <Text fontSize={"lg"} color={"gray.600"}>
-              Iniciar Sesión
-            </Text>
-          </Stack>
+      <Flex direction={'column'} minH={"100vh"} align={"center"} justify={"center"}>
+          <Heading as="h1" mx='auto' fontSize={"4xl"}>
+            Taskty.co
+          </Heading>
+          <Text fontSize={"lg"} mx='auto' py={2} color={"gray.600"}>
+            Iniciar Sesión
+          </Text>
           <Box
             rounded={"lg"}
             bg={useColorModeValue("white", "gray.700")}
             boxShadow={"lg"}
             p={8}
+            mt={4}
           >
             <form onSubmit={handleLogin}>
-              <Stack spacing={4}>
-                <FormControl id="phoneNumber" isRequired>
-                  <FormLabel>Número de teléfono</FormLabel>
-                  <Input type="number" name="cellphone" autoComplete="off" />
+              <Flex direction={'column'} gap={4}>
+                <FormControl isRequired>
+                  <FormLabel sx={{ "&>span": { display: "none" } }}>
+                    Correo electrónico
+                  </FormLabel>
+                  <Input type="email" name="email" />
                 </FormControl>
-                <FormControl id="password" isRequired>
-                  <FormLabel>Contraseña</FormLabel>
+                <FormControl isRequired>
+                  <FormLabel sx={{ "&>span": { display: "none" } }}>
+                    Contraseña
+                  </FormLabel>
                   <InputGroup>
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -97,8 +97,7 @@ const LoginPage = () => {
                     </InputRightElement>
                   </InputGroup>
                 </FormControl>
-                <Stack spacing={8}>
-                  <Stack
+                  <Flex
                     direction={"column"}
                     align={"center"}
                     justify={"space-between"}
@@ -113,23 +112,22 @@ const LoginPage = () => {
                     <Link as={LinkRD} to={"/auth/sign-up"} color={"blue.400"}>
                       Registrarme
                     </Link>
-                  </Stack>
+                  </Flex>
                   <Button
                     type="submit"
                     bg={"blue.400"}
                     color={"white"}
+                    mt={4}
                     _hover={{
                       bg: "blue.500",
                     }}
                   >
                     Iniciar sesión
                   </Button>
-                </Stack>
-              </Stack>
+                </Flex>
             </form>
           </Box>
-        </Stack>
-        <Toaster richColors closeButton position="top-center" />
+        <Toaster richColors/>
       </Flex>
     </>
   );

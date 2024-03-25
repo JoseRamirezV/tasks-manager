@@ -1,13 +1,14 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { AuthContext } from "@/context/AuthContext";
 import {
   addNewTask,
   getUserTasks,
   deleteTasks as serviceDeleteTasks,
   updateTask,
 } from "@/task/services/tasks";
+import { useContext, useEffect, useState } from "react";
 
 const useTasks = () => {
+  const { email, token } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [checkedItems, setCheckedItems] = useState([
     {
@@ -15,25 +16,14 @@ const useTasks = () => {
       checked: false,
     },
   ]);
-  const { id } = useParams();
 
   useEffect(() => {
-    getTasks(id);
-  }, []);
+    if (email !== "") getTasks();
+  }, [email]);
 
-  // useEffect(() => {
-  //     if (data.length > 0) {
-  //       setCheckedItems(
-  //         new Array(data.length).fill({
-  //           id: "",
-  //           checked: false,
-  //         })
-  //       );
-  //     }
-  //   }, [data]);
-
-  const getTasks = async (id) => {
-    const userTasks = await getUserTasks(id);
+  const getTasks = async () => {
+    const userTasks = await getUserTasks(email, token);
+    if (!userTasks) return;
     setData(userTasks);
     setCheckedItems(
       new Array(userTasks.length).fill({
@@ -45,9 +35,9 @@ const useTasks = () => {
 
   const addTask = async (newTask) => {
     try {
-      const { id, daysLeft, error } = await addNewTask(newTask);
+      const { _id, daysLeft, error } = await addNewTask(newTask, token);
       if (error) throw new Error();
-      const newData = [...data, { id, daysLeft, ...newTask }];
+      const newData = [...data, { _id, daysLeft, ...newTask }];
       setData(newData);
 
       setCheckedItems(
@@ -61,14 +51,14 @@ const useTasks = () => {
     }
   };
 
-  const editTask = async (task) => {
-    const taskIndex = data.findIndex((data) => data.id === task.id);
-    const { error, task: updatedTask } = await updateTask(task);
+  const editTask = async (_id, newData) => {
+    const { error, task } = await updateTask(_id, newData, token);
     if (error) return;
+    const taskIndex = data.findIndex((data) => data._id === task._id);
     setData((prevState) => {
       return [
         ...prevState.slice(0, taskIndex),
-        updatedTask,
+        task,
         ...prevState.slice(taskIndex + 1),
       ];
     });
@@ -79,9 +69,9 @@ const useTasks = () => {
       if (item.checked) acc.push(item.id);
       return acc;
     }, []);
-    const { error } = serviceDeleteTasks(tasksToDelete);
+    const { error } = serviceDeleteTasks(tasksToDelete, token);
     if (error) return;
-    setData([...data.filter((task) => !tasksToDelete.includes(task.id))]);
+    setData([...data.filter((task) => !tasksToDelete.includes(task._id))]);
     checkAllItems(false);
   };
 
@@ -96,7 +86,7 @@ const useTasks = () => {
 
   const checkAllItems = (checked) => {
     const allTasks = data.map((task) => ({
-      id: task.id,
+      id: task._id,
       checked,
     }));
     setCheckedItems(allTasks);
