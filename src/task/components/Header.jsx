@@ -12,14 +12,16 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { useContext } from "react";
 import { Link as LinkRD } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
+import Cookies from "js-cookie";
+
 /**
  * @function Header
- * @description Se encarga de renderizar la barra de navegación prinpal del modulo de tareas.
+ * @description Se encarga de renderizar la barra de navegación principal del modulo de tareas.
  * @author HaroldsCode
  */
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { id, name, logout } = useContext(AuthContext);
+  const { name, logout } = useContext(AuthContext);
 
   return (
     <Box
@@ -38,21 +40,24 @@ export default function Header() {
           )}
         </Box>
         <HStack spacing={8} alignItems={"center"}>
-          <Link as={LinkRD} to={`/${id}`}>
+          <Link as={LinkRD} to={"/"}>
             <Text fontWeight={"600"} color={"blue.400"}>
               Taskty.co
             </Text>
           </Link>
           <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
-            <Link as={LinkRD} to={"profile"} fontWeight='bold'>
+            <Link as={LinkRD} to={"profile"} fontWeight="bold" whiteSpace={'nowrap'} maxW={'6rem'} overflowX={'hidden'} textOverflow={'ellipsis'}>
               {name}
             </Link>
-            <Link as={LinkRD} to={`/${id}`}>
+            <Link as={LinkRD} to={'/'}>
               Tareas
             </Link>
           </HStack>
         </HStack>
-        <Link as={AiOutlineLogout} onClick={logout}></Link>
+        <Link as={AiOutlineLogout} onClick={()=>{
+          Cookies.remove('token')
+          logout()
+        }}></Link>
       </Flex>
 
       {isOpen ? (

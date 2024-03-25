@@ -1,26 +1,36 @@
 import {
+  Button,
   Flex,
-  Box,
   FormControl,
   FormLabel,
+  HStack,
+  Heading,
+  Icon,
   Input,
   InputGroup,
-  HStack,
   InputRightElement,
+  Link,
   Stack,
-  Button,
-  Heading,
   Text,
   useColorModeValue,
-  Link,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { Link as LinkRD } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Link as LinkRD } from "react-router-dom";
+import { useLogin } from "../hooks/useLogIn";
+import { Toaster } from "sonner";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const { createUser } = useLogin();
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = Object.fromEntries(new window.FormData(form));
+    createUser(data)
+  };
 
   return (
     <>
@@ -37,49 +47,45 @@ export default function SignUpPage() {
               Sign Up
             </Text>
           </Stack>
-          <Box
+          <Stack
+            spacing={4}
             rounded={"lg"}
             bg={useColorModeValue("white", "gray.700")}
             boxShadow={"lg"}
             p={8}
           >
-            <Stack spacing={4}>
+            <form onSubmit={handleSubmit}>
               <HStack>
-                <Box>
-                  <FormControl id="firstName" isRequired>
-                    <FormLabel>Primer nombre</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl id="middleName">
-                    <FormLabel>Segundo nombre</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
+                <FormControl id="firstName" isRequired>
+                  <FormLabel>Primer nombre</FormLabel>
+                  <Input type="text" name="firstName" />
+                </FormControl>
+                <FormControl id="middleName">
+                  <FormLabel>Segundo nombre</FormLabel>
+                  <Input type="text" name="secondName" />
+                </FormControl>
               </HStack>
               <HStack>
-                <Box>
-                  <FormControl id="firstLastName" isRequired>
-                    <FormLabel>Primer apellido</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
-                <Box>
-                  <FormControl id="secondLastName">
-                    <FormLabel>Segundo pellido</FormLabel>
-                    <Input type="text" />
-                  </FormControl>
-                </Box>
+                <FormControl id="firstLastName" isRequired>
+                  <FormLabel>Primer apellido</FormLabel>
+                  <Input type="text" name="firstLastName" />
+                </FormControl>
+                <FormControl id="secondLastName">
+                  <FormLabel>Segundo apellido</FormLabel>
+                  <Input type="text" name="secondLastName" />
+                </FormControl>
               </HStack>
-              <FormControl id="phoneNumber" isRequired>
-                <FormLabel>Phone Number</FormLabel>
-                <Input type="tel" />
+              <FormControl isRequired>
+                <FormLabel>Email</FormLabel>
+                <Input type="email" name="email" />
               </FormControl>
-              <FormControl id="password" isRequired>
+              <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
-                  <Input type={showPassword ? "text" : "password"} />
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                  />
                   <InputRightElement h={"full"}>
                     <Button
                       variant={"ghost"}
@@ -87,13 +93,18 @@ export default function SignUpPage() {
                         setShowPassword((showPassword) => !showPassword)
                       }
                     >
-                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                      {showPassword ? (
+                        <Icon as={AiOutlineEye} />
+                      ) : (
+                        <Icon as={AiOutlineEyeInvisible} />
+                      )}
                     </Button>
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
               <Stack spacing={10} pt={2}>
                 <Button
+                  type="submit"
                   loadingText="Submitting"
                   size="lg"
                   bg={"blue.400"}
@@ -105,18 +116,19 @@ export default function SignUpPage() {
                   Continuar
                 </Button>
               </Stack>
-              <Stack pt={6}>
-                <Text align={"center"}>
-                  ¿Ya tienes una cuenta?{" "}
-                  <Link color={"blue.400"} as={LinkRD} to={"/auth/sign-in"}>
-                    Iniciar sesión
-                  </Link>
-                </Text>
-              </Stack>
+            </form>
+            <Stack pt={6}>
+              <Text align={"center"}>
+                ¿Ya tienes una cuenta?{" "}
+                <Link color={"blue.400"} as={LinkRD} to={"/auth/sign-in"}>
+                  Iniciar sesión
+                </Link>
+              </Text>
             </Stack>
-          </Box>
+          </Stack>
         </Stack>
       </Flex>
+      <Toaster richColors closeButton/>
     </>
   );
 }
