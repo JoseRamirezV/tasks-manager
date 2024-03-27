@@ -18,18 +18,33 @@ import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link as LinkRD } from "react-router-dom";
-import { useLogin } from "../hooks/useLogIn";
 import { Toaster } from "sonner";
+import { useLogin } from "../hooks/useLogIn";
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { createUser } = useLogin();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const data = Object.fromEntries(new window.FormData(form));
-    createUser(data)
+    const { firstName, secondName, firstLastName, secondLastName, ...data } =
+      Object.fromEntries(new window.FormData(form));
+    setIsLoading(true);
+    await createUser({
+      firstName: firstToUpperCase(firstName),
+      secondName: firstToUpperCase(secondName),
+      firstLastName: firstToUpperCase(firstLastName),
+      secondLastName: firstToUpperCase(secondLastName),
+      ...data,
+    });
+    setIsLoading(false);
+  };
+
+  const firstToUpperCase = (word) => {
+    if(!word) return
+    return word.replace(word[0], word[0].toUpperCase())
   };
 
   return (
@@ -104,6 +119,7 @@ export default function SignUpPage() {
               </FormControl>
               <Stack spacing={10} pt={2}>
                 <Button
+                  isLoading={isLoading}
                   type="submit"
                   loadingText="Submitting"
                   size="lg"
@@ -128,7 +144,7 @@ export default function SignUpPage() {
           </Stack>
         </Stack>
       </Flex>
-      <Toaster richColors closeButton/>
+      <Toaster richColors closeButton />
     </>
   );
 }

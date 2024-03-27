@@ -79,6 +79,7 @@ export const TaskCard = ({
         onClick={() => handleClick(task._id)}
         position={"relative"}
         cursor={"pointer"}
+        h={'10rem'}
       >
         <Fade
           in={isOpen}
@@ -91,12 +92,17 @@ export const TaskCard = ({
           />
         </Fade>
         <CardHeader pb={0} pt={3}>
-          <Heading as={"h3"} size="md" noOfLines={1} w="85%">
+          <Heading as={"h3"} size="md" noOfLines={1} w="85%" py={1}>
             {task.title}
           </Heading>
         </CardHeader>
-        <CardBody py={2}>
-          <Text readOnly fontSize="sm" noOfLines={4} whiteSpace={"pre-line"}>
+        <CardBody py={0} overflow={'visible'}>
+          <Text
+            readOnly
+            fontSize="sm"
+            noOfLines={3}
+            whiteSpace={"pre-line"}
+          >
             {task.description}
           </Text>
         </CardBody>
@@ -117,7 +123,9 @@ export const TaskCard = ({
           <HStack pos={"absolute"} right={2} bottom={2} gap={1}>
             {task.notify && !task.notified && (
               <Tooltip
-                label={`Se notificará ${moment(task.notificationDate).fromNow()}`}
+                label={`Se notificará ${moment(
+                  task.notificationDate
+                ).fromNow()}`}
                 placement="top-end"
                 bg={"gray.50"}
                 color={"gray.700"}
@@ -172,7 +180,7 @@ export const TaskCard = ({
         <TaskForm
           isOpen={modal}
           onClose={closeModal}
-          setShowTaskForm = {setShowTaskForm}
+          setShowTaskForm={setShowTaskForm}
           taskToEditData={task}
           editTask={editTask}
         />

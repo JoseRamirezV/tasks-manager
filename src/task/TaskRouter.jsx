@@ -9,7 +9,7 @@ import Header from "@/task/components/Header";
 import { useContext } from "react";
 
 export const TaskRouter = () => {
-  const { logout, login, id } = useContext(AuthContext);
+  const { logout, login, _id } = useContext(AuthContext);
   const navigate = useNavigate();
 
   guard().then((res) => {
@@ -20,13 +20,14 @@ export const TaskRouter = () => {
           error: res.error,
         },
       });
-    } else if (id === "") {
-      const { id, name, email, token } = res;
+    } else if (_id === "") {
+      const { _id, user, email, token, verified } = res;
       login({
-        id,
+        _id,
         email,
-        name,
+        user,
         token,
+        isVerified: verified,
         isLogged: true,
       });
     }

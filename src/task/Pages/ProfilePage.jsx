@@ -5,7 +5,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { MyEditableInput } from "@/task/components/MyEditableInput";
 
 export const ProfilePage = () => {
-  const { name, email } = useContext(AuthContext);
+  const { user, email } = useContext(AuthContext);
 
   const handleSaveChanges = (e) => {
     e.preventDefault();
@@ -13,7 +13,6 @@ export const ProfilePage = () => {
     const { name, email, password } = Object.fromEntries(
       new window.FormData(form)
     );
-    console.log({ name, email, password });
   };
 
   return (
@@ -25,7 +24,7 @@ export const ProfilePage = () => {
         <FormControl as="form" onSubmit={handleSaveChanges}>
           <SimpleGrid columns={[1, null, 2]} spacing="30px">
             <MyEditableInput
-              defaultValue={name}
+              defaultValue={user}
               label="Nombre"
               name="name"
             />

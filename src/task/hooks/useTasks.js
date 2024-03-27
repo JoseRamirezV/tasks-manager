@@ -6,9 +6,12 @@ import {
   updateTask,
 } from "@/task/services/tasks";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
+import moment from "moment";
+import { validateDates } from "../utils/datesValidator";
 
 const useTasks = () => {
-  const { email, token } = useContext(AuthContext);
+  const { email, token, isVerified } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [checkedItems, setCheckedItems] = useState([
     {
@@ -34,24 +37,52 @@ const useTasks = () => {
   };
 
   const addTask = async (newTask) => {
-    try {
-      const { _id, daysLeft, error } = await addNewTask(newTask, token);
-      if (error) throw new Error();
-      const newData = [...data, { _id, daysLeft, ...newTask }];
-      setData(newData);
-
-      setCheckedItems(
-        new Array(newData.length).fill({
-          id: "",
-          checked: false,
-        })
-      );
-    } catch (err) {
-      console.log(err);
+    if (!isVerified && newTask.notify) {
+      triggerToast('Debes verificar tu cuenta para poder programar notificaciones')
+      return
     }
+    newTask.limitDate = moment(newTask.limitDate).format("YYYY-MM-DD 23:59")
+    newTask.notificationDate = newTask.notificationDate && moment(newTask.notificationDate).format("YYYY-MM-DD HH:mm")
+    const today = moment().format("YYYY-MM-DD HH:mm");
+    
+    const validDates = validateDates({
+      today,
+      limitDate: newTask.limitDate,
+      notificationDate: newTask.notificationDate,
+      notify: newTask.notify,
+    }, triggerToast);
+
+    if (!validDates) return;
+    const { _id, daysLeft, error } = await addNewTask(newTask, token);
+    if (error) throw new Error();
+    const newData = [...data, { _id, daysLeft, ...newTask }];
+    setData(newData);
+    setCheckedItems(
+      new Array(newData.length).fill({
+        id: "",
+        checked: false,
+      })
+    );
   };
 
   const editTask = async (_id, newData) => {
+    if (!isVerified && newData.notify) {
+      triggerToast('Debes verificar tu cuenta para poder programar notificaciones')
+      return
+    }
+    newData.limitDate = moment(newData.limitDate).format("YYYY-MM-DD 23:59")
+    newData.notificationDate = newData.notificationDate && moment(newData.notificationDate).format("YYYY-MM-DD HH:mm")
+    const today = moment().format("YYYY-MM-DD HH:mm");
+    
+    const validDates = validateDates({
+      today,
+      limitDate: newData.limitDate,
+      notificationDate: newData.notificationDate,
+      notify: newData.notify,
+    }, triggerToast);
+
+    if (!validDates) return {};
+
     const { error, task } = await updateTask(_id, newData, token);
     if (error) return;
     const taskIndex = data.findIndex((data) => data._id === task._id);
@@ -62,6 +93,7 @@ const useTasks = () => {
         ...prevState.slice(taskIndex + 1),
       ];
     });
+    return {ok: 'Created'}
   };
 
   const deleteTasks = () => {
@@ -92,13 +124,20 @@ const useTasks = () => {
     setCheckedItems(allTasks);
   };
 
+  const triggerToast = (message) => {
+    toast.warning("Advertencia", {
+      description: message,
+      duration: 2000,
+    });
+  };
+
   return {
     getTasks,
     addTask,
     deleteTasks,
+    editTask,
     checkItem,
     checkAllItems,
-    editTask,
     checkedItems,
     data,
   };

@@ -18,7 +18,7 @@ export const getUserTasks = async (userEmail, token) => {
   return tasks.reduce((acc, task) => {
     return acc.concat({
       ...task,
-      limitDate: moment(task.limitDate, "YYYY-MM-DD").format("YYYY-MM-DD"),
+      limitDate: moment(task.limitDate).format("YYYY-MM-DD"),
       daysLeft: calcDate(task.limitDate),
       notificationDate: moment(task.notificationDate).format(
         "YYYY-MM-DD HH:mm"

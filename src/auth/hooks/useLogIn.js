@@ -1,11 +1,13 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
-import { login as loginService, signUp } from "@/auth/services/users";
+import { login as loginService, signUp, verify } from "@/auth/services/users";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export function useLogin() {
   const [error, setError] = useState(null);
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (error) {
@@ -20,42 +22,75 @@ export function useLogin() {
   });
 
   const authenticateUser = async (email, password) => {
-    const { user, token, error } = await loginService(email, password);
+    const { userData, token, error } = await loginService(email, password);
     if (error) {
       setError(
         "Credenciales incorrectas, por favor verifique su usuario o contraseña"
       );
       return;
     }
-    const { _id: id, user: name } = user;
+    const { _id, user, verified } = userData;
     login({
-      id,
+      _id,
       email,
-      name,
+      user,
       token,
+      isVerified: verified,
       isLogged: true,
     });
   };
-  // Se puede hacer de mejor manera, TODO: refactorizar, crear componente para verificacion de cuenta
   const createUser = async (data) => {
-    const promise = () =>
-      new Promise((resolve, reject) =>
-        signUp(data).then(({ exists, ok }) => {
-          if (ok) return resolve({ ok });
-          reject(exists);
-        })
-      );
-    toast.promise(promise, {
-      loading: "Loading...",
-      success:
+    const { ok, exists } = await signUp(data);
+    if (!ok) {
+      setError(exists ?? "Hubo un problema, por favor intenta mas tarde");
+      return;
+    }
+    toast.success("Bien!", {
+      description:
         "Revisa tu cuenta de correo, ahí encontraras el código de activación de cuenta y estarás listo para usar Taskty",
-      error: (exists) =>
-        exists ?? "Hubo un problema, por favor intenta mas tarde",
+      onDismiss: () =>
+        navigate("/auth/verify-account", {
+          state: { email: data.email },
+        }),
+      onAutoClose: () =>
+        navigate("/auth/verify-account", {
+          state: { email: data.email },
+        }),
+    });
+  };
+
+  const verifyAccount = async (data) => {
+    const promise = () =>
+      new Promise((resolve, reject) => {
+        verify(data).then(({ userData, invalid }) => {
+          if (invalid) reject({ invalid });
+          resolve(userData);
+        });
+      });
+    toast.promise(promise, {
+      loading: "Verificando...",
+      success: (userData) => {
+        const { _id, user, email, token, verified } = userData;
+        setTimeout(() => {
+          login({
+            _id,
+            email,
+            user,
+            token,
+            isVerified: verified,
+            isLogged: true,
+          });
+        }, 2000);
+        return "Verificado!";
+      },
+      error: ({ invalid }) =>
+        invalid ?? "Parece que hubo un problema, por favor intenta mas tarde",
     });
   };
 
   return {
     authenticateUser,
     createUser,
+    verifyAccount,
   };
 }

@@ -21,7 +21,7 @@ import Cookies from "js-cookie";
  */
 export default function Header() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { name, logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
   return (
     <Box
@@ -47,7 +47,7 @@ export default function Header() {
           </Link>
           <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
             <Link as={LinkRD} to={"profile"} fontWeight="bold" whiteSpace={'nowrap'} maxW={'6rem'} overflowX={'hidden'} textOverflow={'ellipsis'}>
-              {name}
+              {user}
             </Link>
             <Link as={LinkRD} to={'/'}>
               Tareas
@@ -67,7 +67,7 @@ export default function Header() {
               Tareas
             </Link>
             <Link as={LinkRD} to={"profile"}>
-              {name}
+              {user}
             </Link>
           </Stack>
         </Box>

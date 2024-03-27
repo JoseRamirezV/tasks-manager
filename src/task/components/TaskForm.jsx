@@ -14,9 +14,7 @@ import {
   ModalOverlay,
   Textarea,
 } from "@chakra-ui/react";
-import moment from "moment";
 import { useContext, useRef, useState } from "react";
-import { toast } from "sonner";
 
 const TASK_PLACEHOLDERS = [
   {
@@ -41,77 +39,45 @@ export function TaskForm({
   isOpen,
   onClose,
   setShowTaskForm,
-  addTask,
   taskToEditData,
+  addTask,
   editTask,
 }) {
-  const { email: userEmail } = useContext(AuthContext);
   const [notify, setNotify] = useState(taskToEditData?.notify || false);
   const initialRef = useRef();
+  const { email: userEmail } = useContext(AuthContext);
 
   const randomPlaceholder = Math.floor(
     Math.random() * TASK_PLACEHOLDERS.length
   );
 
-  const triggerToast = (message) => {
-    toast.warning("Advertencia", {
-      description: message,
-      duration: 2000,
-    });
-  };
-
-  const validateDates = (limit, notification) => {
-    const today = moment();
-    const notified = taskToEditData?.notified;
-    const limitDate = moment(limit).format("YYYY-MM-DD");
-    const notificationDate = moment(notification).format("YYYY-MM-DD HH:mm");
-    const oldNotificationDate = moment(taskToEditData?.notificationDate).format(
-      "YYYY-MM-DD HH:mm"
-    );
-    const validLimitDate = limitDate >= today.format("YYYY-MM-DD");
-    const validNotificationDate =
-      !notify ||
-      (!notified && notificationDate > today.format("YYYY-MM-DD HH:mm")) ||
-      (notified && oldNotificationDate < notificationDate);
-
-    if (!validLimitDate)
-      triggerToast("Las fecha limite no puede ser días anteriores a hoy");
-
-    if (!validNotificationDate)
-      triggerToast(
-        "Las fecha y hora de notificación no pueden ser menores a la fecha y hora actual"
-      );
-    return validLimitDate && validNotificationDate;
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const { title, description, limitDate, notify, notificationDate } =
+    const { notify, notificationDate, ...rest } =
       Object.fromEntries(new window.FormData(form));
-    if (!validateDates(limitDate, notificationDate)) return;
+
     if (taskToEditData) {
       const { _id } = taskToEditData;
       const updatedTask = {
         userEmail,
-        title,
-        description,
-        limitDate,
         notify: !!notify,
-        notificationDate: notify ? notificationDate : null,
+        notificationDate: notify && notificationDate,
+        ...rest
       };
-      editTask(_id, updatedTask);
+      editTask(_id, updatedTask).then(({ok}) => {
+        if (ok) onClose();
+      });
     } else {
       addTask({
         userEmail,
-        title,
-        description,
-        limitDate,
         notify: !!notify,
         notificationDate: notify ? notificationDate : null,
+        ...rest
+      }).then(({ok}) => {
+        if (ok) onClose();
       });
     }
-    onClose();
   };
 
   return (
@@ -167,11 +133,7 @@ export function TaskForm({
               <Input
                 name="notificationDate"
                 type="datetime-local"
-                defaultValue={
-                  taskToEditData
-                    ? moment(taskToEditData?.notificationDate).format('YYYY-MM-DD HH:mm')
-                    : moment().add(3, "d").format('YYYY-MM-DD HH:mm')
-                }
+                defaultValue={taskToEditData?.notificationDate ?? new Date()}
                 isDisabled={!notify}
               ></Input>
             </FormControl>
