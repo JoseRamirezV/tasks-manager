@@ -29,13 +29,9 @@ export function useLogin() {
       );
       return;
     }
-    const { _id, user, verified } = userData;
     login({
-      _id,
-      email,
-      user,
+      ...userData,
       token,
-      isVerified: verified,
       isLogged: true,
     });
   };
@@ -45,7 +41,7 @@ export function useLogin() {
       setError(exists ?? "Hubo un problema, por favor intenta mas tarde");
       return;
     }
-    toast.success("Bien!", {
+    toast.info("Perfecto!", {
       description:
         "Revisa tu cuenta de correo, ahí encontraras el código de activación de cuenta y estarás listo para usar Taskty",
       onDismiss: () =>
@@ -70,14 +66,9 @@ export function useLogin() {
     toast.promise(promise, {
       loading: "Verificando...",
       success: (userData) => {
-        const { _id, user, email, token, verified } = userData;
         setTimeout(() => {
           login({
-            _id,
-            email,
-            user,
-            token,
-            isVerified: verified,
+            ...userData,
             isLogged: true,
           });
         }, 2000);

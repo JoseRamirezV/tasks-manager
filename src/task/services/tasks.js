@@ -3,8 +3,8 @@ import moment from "moment";
 const URL = "http://localhost:5000/api/tasks";
 
 function calcDate(limitDate) {
-  const limit = moment(limitDate, "YYYY-MM-DD");
-  const today = moment().format("YYYY-MM-DD");
+  const limit = moment(moment(limitDate).format("YYYY-MM-DD 23:59"));
+  const today = moment().format("YYYY-MM-DD 23:59");
   return limit.diff(today, "day");
 }
 
@@ -37,9 +37,11 @@ export const addNewTask = async (task, token) => {
     },
     body: JSON.stringify(task),
   });
-  const { error, _id } = await res.json();
+  const { error, task: savedTask } = await res.json();
   const daysLeft = calcDate(task.limitDate);
-  return { error, _id, daysLeft };
+  savedTask.daysLeft = daysLeft;
+  savedTask.limitDate = moment(savedTask.limitDate).format("YYYY-MM-DD");
+  return { error, task: savedTask };
 };
 
 export const deleteTasks = async (tasks, token) => {
@@ -67,7 +69,7 @@ export const updateTask = async (_id, newData, token) => {
     body: JSON.stringify(newData),
   });
   const { error, task, rescheduled } = await res.json();
-  task.limitDate = moment(task.limitDate, "YYYY-MM-DD").format("YYYY-MM-DD");
+  task.limitDate = moment(task.limitDate).format("YYYY-MM-DD");
   task.notificationDate = moment(task.notificationDate).format(
     "YYYY-MM-DD HH:mm"
   );

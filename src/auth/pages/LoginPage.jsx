@@ -31,7 +31,7 @@ const LoginPage = () => {
       toast.error("Error", {
         description: state.error,
       });
-      state.error = undefined
+      window.history.replaceState({}, '')
     }
   }, []);
 

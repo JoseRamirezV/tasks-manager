@@ -1,49 +1,44 @@
-import { Box, Button, FormControl, SimpleGrid } from "@chakra-ui/react";
-import { useContext } from "react";
+import { UpdateUserData } from "@/task/components/UpdateUserData";
+import { Stack } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
-import { AuthContext } from "@/context/AuthContext";
-import { MyEditableInput } from "@/task/components/MyEditableInput";
+import ChangePassword from "../components/ChangePassword";
+import { useUser } from "../hooks/useUser";
+
+const BUTTON_STATES = {
+  default: {
+    message: "Guardar cambios",
+    schema: "blue",
+    hover: "blue.500",
+  },
+  success: {
+    message: "Actualizada!",
+    schema: "green",
+    hover: "green.500",
+  },
+  error: {
+    message: "Algo salió mal",
+    schema: "red",
+    hover: "red.600",
+  },
+  loading: {
+    message: "Cargando...",
+    schema: "blackAlpha",
+    hover: "gray.800",
+  },
+};
 
 export const ProfilePage = () => {
-  const { user, email } = useContext(AuthContext);
-
-  const handleSaveChanges = (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const { name, email, password } = Object.fromEntries(
-      new window.FormData(form)
-    );
-  };
+  const { user, updateUserData, changePassword } = useUser();
 
   return (
     <>
       <Helmet>
         <title>Perfil | Taskty</title>
       </Helmet>
-      <Box>
-        <FormControl as="form" onSubmit={handleSaveChanges}>
-          <SimpleGrid columns={[1, null, 2]} spacing="30px">
-            <MyEditableInput
-              defaultValue={user}
-              label="Nombre"
-              name="name"
-            />
-            <MyEditableInput
-              defaultValue={email}
-              label="Numero de teléfono"
-              name="email"
-              type="tel"
-            />
-            <MyEditableInput
-              label="Contraseña"
-              name="password"
-            />
-          </SimpleGrid>
-          <Button colorScheme="teal" variant="solid" mt={8} type="submit">
-            Guardar cambios
-          </Button>
-        </FormControl>
-      </Box>
+      <Stack spacing={5}>
+        <UpdateUserData currentData={user} STATES={BUTTON_STATES} updateUserData={updateUserData} />
+        <ChangePassword STATES={BUTTON_STATES} changePassword={changePassword} />
+      </Stack>
     </>
   );
 };

@@ -26,25 +26,30 @@ export default function SignUpPage() {
   const { createUser } = useLogin();
   const [isLoading, setIsLoading] = useState(false);
 
+  const firstToUpperCase = (words) => {
+    if (!words) return;
+    for (const property in words) {
+      const word = words[property];
+      words[property] = `${word.charAt(0).toUpperCase()}${word
+        .slice(1)
+        .toLowerCase()}`;
+    }
+    return words;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const { firstName, secondName, firstLastName, secondLastName, ...data } =
-      Object.fromEntries(new window.FormData(form));
+    const { email, password, ...userName } = Object.fromEntries(
+      new window.FormData(form)
+    );
     setIsLoading(true);
     await createUser({
-      firstName: firstToUpperCase(firstName),
-      secondName: firstToUpperCase(secondName),
-      firstLastName: firstToUpperCase(firstLastName),
-      secondLastName: firstToUpperCase(secondLastName),
-      ...data,
+      ...firstToUpperCase(userName),
+      email,
+      password,
     });
     setIsLoading(false);
-  };
-
-  const firstToUpperCase = (word) => {
-    if(!word) return
-    return word.replace(word[0], word[0].toUpperCase())
   };
 
   return (
@@ -117,21 +122,17 @@ export default function SignUpPage() {
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
-              <Stack spacing={10} pt={2}>
-                <Button
-                  isLoading={isLoading}
-                  type="submit"
-                  loadingText="Submitting"
-                  size="lg"
-                  bg={"blue.400"}
-                  color={"white"}
-                  _hover={{
-                    bg: "blue.500",
-                  }}
-                >
-                  Continuar
-                </Button>
-              </Stack>
+              <Button
+                isLoading={isLoading}
+                type="submit"
+                loadingText="Submitting"
+                size="lg"
+                w="full"
+                mt={4}
+                colorScheme="blue"
+              >
+                Registrarse
+              </Button>
             </form>
             <Stack pt={6}>
               <Text align={"center"}>

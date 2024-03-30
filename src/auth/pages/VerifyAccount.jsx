@@ -22,6 +22,7 @@ export default function VerifyAccount() {
   const { verifyAccount } = useLogin();
   const location = useLocation();
   const queryParameters = new URLSearchParams(location.search);
+  
   const [data, setData] = useState({
     email: queryParameters.get("email"),
     code: queryParameters.get("token"),

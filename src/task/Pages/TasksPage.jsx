@@ -15,7 +15,6 @@ import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 import { TaskCard } from "@/task/components/TaskCard";
 import { TaskForm } from "@/task/components/TaskForm";
 import useTasks from "@/task/hooks/useTasks";
-import { Toaster } from "sonner";
 
 const TasksPage = () => {
   const {
@@ -98,7 +97,6 @@ const TasksPage = () => {
         </SimpleGrid>
       </Box>
       <TaskForm isOpen={isOpen} onClose={onClose} addTask={addTask} />
-      <Toaster richColors expand closeButton />
     </>
   );
 };

@@ -9,13 +9,6 @@ export const login = async (email, password) => {
   return { userData: user, token };
 };
 
-export const isAuthenticated = async (token) => {
-  if (!token) return;
-  const res = await fetch(`${URL}/isLogged/${token}`);
-  const { _id, email, user, verified, error } = await res.json();
-  return { _id, user, email, token, verified, error };
-};
-
 export const signUp = async (data) => {
   const temporalToken = generateTemporalToken(100000, 999999);
   const res = await fetch(`${URL}/signUp`, {
@@ -32,9 +25,51 @@ export const signUp = async (data) => {
   return await res.json();
 };
 
+export const update = async ({ token, _id, data, needsVerification }) => {
+  if (needsVerification) {
+    needsVerification.temporalToken = generateTemporalToken(100000, 999999);
+    needsVerification.verificationUrl = `${window.location.origin}/auth/verify-account?email=${data.email}&token=${needsVerification.temporalToken}`;
+  }
+  const res = await fetch(`${URL}/update/${_id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ ...data, needsVerification }),
+  });
+  return await res.json();
+};
+
+export const changePassword = async ({
+  token,
+  _id,
+  oldPassword,
+  newPassword,
+}) => {
+  const res = await fetch(`${URL}/change-password/${_id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ oldPassword, newPassword }),
+  });
+  const status = await res.json();
+  return status;
+};
+
+export const isAuthenticated = async (token) => {
+  if (!token) return;
+  const res = await fetch(`${URL}/isLogged/${token}`);
+  const { error, ...userData } = await res.json();
+  if (error) return { error };
+  return userData;
+};
+
 export const verify = async (data) => {
   const res = await fetch(`${URL}/verify`, {
-    method: "POST",
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },

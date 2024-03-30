@@ -12,7 +12,6 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { useContext } from "react";
 import { Link as LinkRD } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
-import Cookies from "js-cookie";
 
 /**
  * @function Header
@@ -46,7 +45,7 @@ export default function Header() {
             </Text>
           </Link>
           <HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
-            <Link as={LinkRD} to={"profile"} fontWeight="bold" whiteSpace={'nowrap'} maxW={'6rem'} overflowX={'hidden'} textOverflow={'ellipsis'}>
+            <Link as={LinkRD} to={"profile"} fontWeight="bold" whiteSpace={'nowrap'} maxw={'8rem'} overflowX={'hidden'} textOverflow={'ellipsis'}>
               {user}
             </Link>
             <Link as={LinkRD} to={'/'}>
@@ -55,7 +54,6 @@ export default function Header() {
           </HStack>
         </HStack>
         <Link as={AiOutlineLogout} onClick={()=>{
-          Cookies.remove('token')
           logout()
         }}></Link>
       </Flex>

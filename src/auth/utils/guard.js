@@ -2,7 +2,7 @@ import { isAuthenticated } from "@/auth/services/users";
 import Cookies from "js-cookie";
 
 export default async function guard() {
-  const { token } = Cookies.get();
+  const token = Cookies.get('token');
   const res = await isAuthenticated(token);
   if (!res) return;
   const { error, ...user } = res;

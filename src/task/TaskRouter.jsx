@@ -7,6 +7,7 @@ import { ProfilePage } from "@/task/Pages/ProfilePage";
 import TasksPage from "@/task/Pages/TasksPage";
 import Header from "@/task/components/Header";
 import { useContext } from "react";
+import { Toaster } from "sonner";
 
 export const TaskRouter = () => {
   const { logout, login, _id } = useContext(AuthContext);
@@ -21,13 +22,9 @@ export const TaskRouter = () => {
         },
       });
     } else if (_id === "") {
-      const { _id, user, email, token, verified } = res;
+      const userData = res;
       login({
-        _id,
-        email,
-        user,
-        token,
-        isVerified: verified,
+        ...userData,
         isLogged: true,
       });
     }
@@ -43,7 +40,8 @@ export const TaskRouter = () => {
           <Route path={"*"} exact element={<Navigate to={""} />} />
         </Routes>
       </Container>
-      <Center>&copy; 2023</Center>
+      <Center mb={5}>&copy; 2023</Center>
+      <Toaster richColors expand closeButton/>
     </>
   );
 };

@@ -14,6 +14,7 @@ import {
   ModalOverlay,
   Textarea,
 } from "@chakra-ui/react";
+import moment from "moment";
 import { useContext, useRef, useState } from "react";
 
 const TASK_PLACEHOLDERS = [
@@ -54,8 +55,9 @@ export function TaskForm({
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const { notify, notificationDate, ...rest } =
-      Object.fromEntries(new window.FormData(form));
+    const { notify, notificationDate, ...rest } = Object.fromEntries(
+      new window.FormData(form)
+    );
 
     if (taskToEditData) {
       const { _id } = taskToEditData;
@@ -63,30 +65,33 @@ export function TaskForm({
         userEmail,
         notify: !!notify,
         notificationDate: notify && notificationDate,
-        ...rest
+        ...rest,
       };
-      editTask(_id, updatedTask).then(({ok}) => {
-        if (ok) onClose();
+      editTask(_id, updatedTask).then(({ ok }) => {
+        if (ok) closeForm();
       });
     } else {
       addTask({
         userEmail,
         notify: !!notify,
         notificationDate: notify ? notificationDate : null,
-        ...rest
-      }).then(({ok}) => {
-        if (ok) onClose();
+        ...rest,
+      }).then(({ ok }) => {
+        if (ok) closeForm();
       });
     }
+  };
+
+  const closeForm = () => {
+    if (taskToEditData) setShowTaskForm(false);
+    setNotify(false);
+    onClose();
   };
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={() => {
-        if (taskToEditData) setShowTaskForm(false);
-        onClose();
-      }}
+      onClose={closeForm}
       initialFocusRef={initialRef}
       size={{ base: "xs", sm: "md" }}
       isCentered
@@ -133,7 +138,7 @@ export function TaskForm({
               <Input
                 name="notificationDate"
                 type="datetime-local"
-                defaultValue={taskToEditData?.notificationDate ?? new Date()}
+                defaultValue={notify ? taskToEditData?.notificationDate : moment().format("YYYY-MM-DD HH:mm")}
                 isDisabled={!notify}
               ></Input>
             </FormControl>
@@ -157,10 +162,7 @@ export function TaskForm({
               {taskToEditData ? "Confirm" : "Save"}
             </Button>
             <Button
-              onClick={() => {
-                if (taskToEditData) setShowTaskForm(false);
-                onClose();
-              }}
+              onClick={closeForm}
               size={{ base: "xs", sm: "sm" }}
             >
               Cancel

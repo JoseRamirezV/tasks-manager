@@ -1,5 +1,5 @@
+import Cookies from "js-cookie";
 import { createContext, useReducer } from "react";
-
 
 /**
  * @description Estado inicial y objeto que define el contexto de autenticación
@@ -8,10 +8,13 @@ export const InitialState = {
   _id: "",
   email: "",
   user: "",
+  firstName: "",
+  secondName: "",
+  firstLastName: "",
+  secondLastName: "",
   token: "",
-  password: "",
-  isVerified: false,
-  isLogged: false
+  verified: false,
+  isLogged: false,
 };
 
 /**
@@ -51,6 +54,7 @@ export function AuthContextProvider({ children }) {
   }
 
   function logout() {
+    Cookies.remove('token')
     dispatch({
       type: "LOGOUT",
     });
@@ -61,7 +65,7 @@ export function AuthContextProvider({ children }) {
       value={{
         ...state,
         login,
-        logout
+        logout,
       }}
     >
       {children}
