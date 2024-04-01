@@ -91,11 +91,12 @@ export const passwordRecovery = async ({ email, code, newPassword }) => {
       },
       body: JSON.stringify(body),
     });
-    const { user, ok, error } = await res.json();
-    if (error) throw error;
+    const { ok, user, error } = await res.json();
+    console.log({ ok, user, error });
+    if (error) throw new Error(error);
     return { user, ok };
   } catch (error) {
-    throw { error };
+    return { error: error.message };
   }
 };
 

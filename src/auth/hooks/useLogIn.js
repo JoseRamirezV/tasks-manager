@@ -42,7 +42,8 @@ export function useLogin() {
   };
 
   const createUser = async (data) => {
-    if(data.passwordVerification !== data.password) return setError("Las contraseñas no coinciden")
+    if (data.passwordVerification !== data.password)
+      return setError("Las contraseñas no coinciden");
     const { ok, exists } = await signUp(data);
     if (!ok) {
       setError(exists ?? "Hubo un problema, por favor intenta mas tarde");
@@ -70,22 +71,41 @@ export function useLogin() {
     password,
     passVerification,
   }) => {
+    const toastId = "validation";
+    toast.loading(code ? "Verificando..." : "Enviando...",{
+      id: toastId
+    });
     if (password !== passVerification) {
       setError("Las contraseñas no coinciden");
-      return;
+      return {};
     }
-    const promise = passwordRecovery({ email, code, newPassword: password });
-    toast.promise(promise, {
-      loading: code ? "Verificando..." : "Enviando...",
-      success: ({ ok, user }) => {
-        if (user)
-          setTimeout(() => {
-            navigate("/auth/sign-in");
-          }, 2000);
-        return ok;
-      },
-      error: ({ error }) => error,
+    const { ok, user, error } = await passwordRecovery({
+      email,
+      code,
+      newPassword: password,
     });
+    if (user) {
+      toast.success('Listo, ya puedes iniciar sesión!', {
+        id: toastId,
+        description: null
+      })
+      setTimeout(() => {
+        navigate("/auth/sign-in");
+      }, 2000);
+      return {}
+    }
+    if(ok){
+      toast.info("Código enviado", {
+        id: toastId,
+        description: 'Por favor revisa tu correo electrónico, ahí encontraras el código que necesitas'
+      })
+      return {}
+    }
+    toast.error('Error',{
+      id: toastId,
+      description: error
+    })
+    return { error };
   };
 
   const verifyAccount = async (data) => {

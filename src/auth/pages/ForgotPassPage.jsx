@@ -27,7 +27,7 @@ export default function ForgotPassPage() {
   const [isInvalid, setIsInvalid] = useState();
   const pinInput = useRef();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
     const { email, password, passVerification } = Object.fromEntries(
@@ -35,7 +35,13 @@ export default function ForgotPassPage() {
     );
     if (!validateEmail(email)) return setIsInvalid(true);
     const code = pinInput.current;
-    forgotPassword({ email, code, password, passVerification });
+    const { error } = await forgotPassword({
+      email,
+      code,
+      password,
+      passVerification,
+    });
+    if(error) return
     setShowCodeInput(true);
   };
 
@@ -63,7 +69,7 @@ export default function ForgotPassPage() {
               Has olvidado tu contraseña?
             </Text>
             <Stack as={"form"} onSubmit={handleSubmit} w={"85%"} spacing={4}>
-              <FormControl isInvalid={isInvalid}>
+              <FormControl isInvalid={isInvalid} isReadOnly={showCodeInput}>
                 <Input
                   name="email"
                   type="email"

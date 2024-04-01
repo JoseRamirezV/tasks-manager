@@ -61,6 +61,7 @@ const useTasks = () => {
     if (!validDates) return {};
     newTask.limitDate = limitDate
     const { task: savedTask, error } = await addNewTask(newTask, token);
+    console.log(savedTask)
     if (error) {
       triggerToast(error);
       return {};

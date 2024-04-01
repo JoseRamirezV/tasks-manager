@@ -26,7 +26,7 @@ import validateEmail from "../utils/validateEmail";
 const LoginPage = () => {
   const { authenticateUser } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
-  const [isInvalid, setIsInvalid] = useState()
+  const [isInvalid, setIsInvalid] = useState();
   const { state } = useLocation();
 
   useEffect(() => {
@@ -42,9 +42,9 @@ const LoginPage = () => {
     event.preventDefault();
     const form = event.currentTarget;
     const { email, password } = Object.fromEntries(new window.FormData(form));
-    if(!validateEmail(email)){
-      setIsInvalid(true)
-      return
+    if (!validateEmail(email)) {
+      setIsInvalid(true);
+      return;
     }
     authenticateUser(email, password);
   }
@@ -83,7 +83,9 @@ const LoginPage = () => {
                   type="email"
                   name="email"
                   placeholder="user@example.com"
-                  onChange={()=>{if(isInvalid) setIsInvalid(false)}}
+                  onChange={() => {
+                    if (isInvalid) setIsInvalid(false);
+                  }}
                 />
 
                 <FormErrorMessage>Email invalido</FormErrorMessage>
@@ -96,6 +98,7 @@ const LoginPage = () => {
                   <Input
                     type={showPassword ? "text" : "password"}
                     name="password"
+                    placeholder="Contraseña"
                   />
                   <InputRightElement>
                     <IconButton

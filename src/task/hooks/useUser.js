@@ -82,7 +82,6 @@ export const useUser = () => {
 
   const deleteAccount = async ({ password }) => {
     const { ok, error } = await deleteUser({ _id, token, password });
-    console.log(error);
     if (ok) {
       const promise = new Promise((resolve) =>
         setTimeout(() => {
