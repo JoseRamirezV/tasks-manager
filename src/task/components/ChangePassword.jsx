@@ -120,7 +120,7 @@ export default function ChangePassword({ STATES, changePassword }) {
             </InputGroup>
           </FormControl>
         </HStack>
-        <HStack spacing={5} align={"end"} mb={10} flexDir={"row-reverse"}>
+        <HStack spacing={5} align={"end"} flexDir={"row-reverse"}>
           <FormControl flex={"0 1 50%"} isRequired>
             <InputGroup>
               <Input

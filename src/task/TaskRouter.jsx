@@ -40,7 +40,7 @@ export const TaskRouter = () => {
           <Route path={"*"} exact element={<Navigate to={""} />} />
         </Routes>
       </Container>
-      <Center mb={5}>&copy; 2023</Center>
+      <Center mt={10} mb={5}>&copy; 2023</Center>
       <Toaster richColors expand closeButton/>
     </>
   );

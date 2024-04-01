@@ -39,6 +39,7 @@ export default function VerifyAccount() {
     const form = e.currentTarget;
     const email = new window.FormData(form).get("email");
     verifyAccount({ email, code: data.code });
+    window.history.replaceState({}, "");
   };
 
   return (
@@ -67,7 +68,7 @@ export default function VerifyAccount() {
             <form onSubmit={handleSubmit}>
               <FormControl>
                 <Input
-                  value={state ? state.email : data.email}
+                  defaultValue={state ? state.email : data.email}
                   name="email"
                   size={"lg"}
                   opacity={0.5}

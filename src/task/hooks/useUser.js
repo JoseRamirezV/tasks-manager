@@ -1,6 +1,7 @@
 import {
   changePassword as changePasswordService,
   update,
+  deleteUser,
 } from "@/auth/services/users";
 import validateEmail from "@/auth/utils/validateEmail";
 import { AuthContext } from "@/context/AuthContext";
@@ -79,9 +80,32 @@ export const useUser = () => {
     return { ok };
   };
 
+  const deleteAccount = async ({ password }) => {
+    const { ok, error } = await deleteUser({ _id, token, password });
+    console.log(error);
+    if (ok) {
+      const promise = new Promise((resolve) =>
+        setTimeout(() => {
+          resolve(ok);
+        }, 2000)
+      );
+      toast.promise(promise, {
+        loading: "Cerrando sesión...",
+        success: (ok) => `${ok}, adios 😢`,
+        onAutoClose: ({ type }) => {
+          if (type === "success") logout();
+        },
+      });
+      return {};
+    }
+    toast.error("Error", { description: error });
+    return { error };
+  };
+
   return {
     updateUserData,
     changePassword,
+    deleteAccount,
     user: { firstName, secondName, firstLastName, secondLastName, email },
   };
 };

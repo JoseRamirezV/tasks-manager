@@ -16,7 +16,8 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 
 export function UpdateUserData({ currentData, STATES, updateUserData }) {
   const [buttonState, setButtonState] = useState(STATES.default);
-  const [showHelper, setShowHelper] = useState(false);
+  const [showHelper, setShowHelper] = useState(false);  
+
 
   const firstToUpperCase = (words) => {
     if (!words) return;
@@ -50,6 +51,10 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
     setButtonState(STATES.success);
   };
 
+  const resetButtonState = () => {
+    if (buttonState !== STATES.loading) setButtonState(STATES.default);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={4} mt={5}>
@@ -68,11 +73,9 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
               size={{ base: "sm", sm: "md" }}
               type="text"
               name="firstName"
+              autoCapitalize="words"
               defaultValue={currentData.firstName}
-              onChange={() => {
-                if (buttonState !== STATES.loading)
-                  setButtonState(STATES.default);
-              }}
+              onChange={resetButtonState}
             />
           </FormControl>
           <FormControl id="middleName">
@@ -83,11 +86,9 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
               size={{ base: "sm", sm: "md" }}
               type="text"
               name="secondName"
+              autoCapitalize="words"
               defaultValue={currentData.secondName}
-              onChange={() => {
-                if (buttonState !== STATES.loading)
-                  setButtonState(STATES.default);
-              }}
+              onChange={resetButtonState}
             />
           </FormControl>
         </HStack>
@@ -100,11 +101,9 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
               size={{ base: "sm", sm: "md" }}
               type="text"
               name="firstLastName"
+              autoCapitalize="words"
               defaultValue={currentData.firstLastName}
-              onChange={() => {
-                if (buttonState !== STATES.loading)
-                  setButtonState(STATES.default);
-              }}
+              onChange={resetButtonState}
             />
           </FormControl>
           <FormControl id="secondLastName">
@@ -115,11 +114,9 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
               size={{ base: "sm", sm: "md" }}
               type="text"
               name="secondLastName"
+              autoCapitalize="words"
               defaultValue={currentData.secondLastName}
-              onChange={() => {
-                if (buttonState !== STATES.loading)
-                  setButtonState(STATES.default);
-              }}
+              onChange={resetButtonState}
             />
           </FormControl>
         </HStack>
@@ -132,12 +129,10 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
                 type="email"
                 name="email"
                 defaultValue={currentData.email}
+                autoComplete="off"
                 onChange={(e) => {
-                  if (buttonState !== STATES.loading)
-                    setButtonState(STATES.default);
-                  if (!showHelper) return setShowHelper(true);
-                  if (e.currentTarget.value === currentData.email)
-                    setShowHelper(false);
+                  resetButtonState();
+                  setShowHelper(e.currentTarget.value !== currentData.email)
                 }}
               />
               <Tooltip
@@ -162,7 +157,7 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
             flex={"0 1 50%"}
             size={{ base: "sm", sm: "md" }}
             colorScheme={buttonState.schema}
-            loadingText="Guardando cambios..."
+            loadingText={STATES.loading.message}
             isLoading={buttonState === STATES.loading}
             isDisabled={
               buttonState === STATES.success || buttonState === STATES.error

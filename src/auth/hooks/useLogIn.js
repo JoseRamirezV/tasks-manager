@@ -1,6 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/context/AuthContext";
-import { login as loginService, signUp, verify } from "@/auth/services/users";
+import {
+  login as loginService,
+  passwordRecovery,
+  signUp,
+  verify,
+} from "@/auth/services/users";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 
@@ -19,7 +24,7 @@ export function useLogin() {
     return () => {
       setError(null);
     };
-  });
+  }, [error]);
 
   const authenticateUser = async (email, password) => {
     const { userData, token, error } = await loginService(email, password);
@@ -35,7 +40,9 @@ export function useLogin() {
       isLogged: true,
     });
   };
+
   const createUser = async (data) => {
+    if(data.passwordVerification !== data.password) return setError("Las contraseñas no coinciden")
     const { ok, exists } = await signUp(data);
     if (!ok) {
       setError(exists ?? "Hubo un problema, por favor intenta mas tarde");
@@ -52,6 +59,32 @@ export function useLogin() {
         navigate("/auth/verify-account", {
           state: { email: data.email },
         }),
+    });
+  };
+
+  const deleteUser = () => {};
+
+  const forgotPassword = async ({
+    email,
+    code,
+    password,
+    passVerification,
+  }) => {
+    if (password !== passVerification) {
+      setError("Las contraseñas no coinciden");
+      return;
+    }
+    const promise = passwordRecovery({ email, code, newPassword: password });
+    toast.promise(promise, {
+      loading: code ? "Verificando..." : "Enviando...",
+      success: ({ ok, user }) => {
+        if (user)
+          setTimeout(() => {
+            navigate("/auth/sign-in");
+          }, 2000);
+        return ok;
+      },
+      error: ({ error }) => error,
     });
   };
 
@@ -83,5 +116,7 @@ export function useLogin() {
     authenticateUser,
     createUser,
     verifyAccount,
+    deleteUser,
+    forgotPassword,
   };
 }

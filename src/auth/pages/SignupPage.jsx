@@ -2,6 +2,7 @@ import {
   Button,
   Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   Heading,
@@ -20,10 +21,15 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link as LinkRD } from "react-router-dom";
 import { Toaster } from "sonner";
 import { useLogin } from "../hooks/useLogIn";
+import validateEmail from "../utils/validateEmail";
 
 export default function SignUpPage() {
-  const [showPassword, setShowPassword] = useState(false);
   const { createUser } = useLogin();
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    verification: false,
+  });
+  const [isInvalid, setIsInvalid] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   const firstToUpperCase = (words) => {
@@ -40,14 +46,15 @@ export default function SignUpPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.currentTarget;
-    const { email, password, ...userName } = Object.fromEntries(
-      new window.FormData(form)
-    );
+    const { email, password, passwordVerification, ...userName } =
+      Object.fromEntries(new window.FormData(form));
+    if (!validateEmail(email)) return setIsInvalid(true);
     setIsLoading(true);
     await createUser({
       ...firstToUpperCase(userName),
       email,
       password,
+      passwordVerification,
     });
     setIsLoading(false);
   };
@@ -97,23 +104,62 @@ export default function SignUpPage() {
               </HStack>
               <FormControl isRequired>
                 <FormLabel>Email</FormLabel>
-                <Input type="email" name="email" />
+                <Input
+                  type="email"
+                  name="email"
+                  onChange={() => {
+                    if (isInvalid) setIsInvalid(false);
+                  }}
+                />
+                <FormErrorMessage>Correo invalido</FormErrorMessage>
               </FormControl>
               <FormControl isRequired>
                 <FormLabel>Password</FormLabel>
                 <InputGroup>
                   <Input
-                    type={showPassword ? "text" : "password"}
+                    type={showPassword.password ? "text" : "password"}
                     name="password"
+                    placeholder="Contraseña"
                   />
                   <InputRightElement h={"full"}>
                     <Button
                       variant={"ghost"}
+                      tabIndex={-1}
                       onClick={() =>
-                        setShowPassword((showPassword) => !showPassword)
+                        setShowPassword((showPassword) => ({
+                          ...showPassword,
+                          password: !showPassword.password,
+                        }))
                       }
                     >
-                      {showPassword ? (
+                      {showPassword.password ? (
+                        <Icon as={AiOutlineEye} />
+                      ) : (
+                        <Icon as={AiOutlineEyeInvisible} />
+                      )}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              <FormControl>
+                <InputGroup mt={4}>
+                  <Input
+                    type={showPassword.verification ? "text" : "password"}
+                    name="passwordVerification"
+                    placeholder="Verifica contraseña"
+                  />
+                  <InputRightElement h={"full"}>
+                    <Button
+                      variant={"ghost"}
+                      tabIndex={-1}
+                      onClick={() =>
+                        setShowPassword((showPassword) => ({
+                          ...showPassword,
+                          verification: !showPassword.verification,
+                        }))
+                      }
+                    >
+                      {showPassword.verification ? (
                         <Icon as={AiOutlineEye} />
                       ) : (
                         <Icon as={AiOutlineEyeInvisible} />
