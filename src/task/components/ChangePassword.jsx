@@ -1,6 +1,5 @@
 import {
   Button,
-  Divider,
   FormControl,
   FormLabel,
   HStack,
@@ -9,7 +8,7 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Stack,
+  Stack
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -44,13 +43,11 @@ export default function ChangePassword({ STATES, changePassword }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Stack spacing={5} mt={4}>
+      <Stack as={'form'} onSubmit={handleSubmit} spacing={5}>
         <span>
           <Heading as={"h2"} size={"md"} mb={2}>
             Cambio de contraseña
           </Heading>
-          <Divider />
         </span>
         <HStack spacing={5}>
           <FormControl isRequired>
@@ -164,6 +161,5 @@ export default function ChangePassword({ STATES, changePassword }) {
           </Button>
         </HStack>
       </Stack>
-    </form>
   );
 }

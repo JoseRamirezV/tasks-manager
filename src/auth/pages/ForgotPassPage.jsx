@@ -53,8 +53,7 @@ export default function ForgotPassPage() {
       <Flex minH={"100vh"} align={"center"} justify={"center"}>
         <Stack
           spacing={6}
-          w={"full"}
-          maxW={"md"}
+          w={{base: 'xs', sm: 'md'}}
           bg={useColorModeValue("white", "gray.700")}
           rounded={"xl"}
           boxShadow={"lg"}

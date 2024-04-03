@@ -1,5 +1,5 @@
 import { UpdateUserData } from "@/task/components/UpdateUserData";
-import { Stack } from "@chakra-ui/react";
+import { Divider, Stack } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
 import ChangePassword from "../components/ChangePassword";
 import { useUser } from "../hooks/useUser";
@@ -32,9 +32,11 @@ export const ProfilePage = () => {
       <Helmet>
         <title>Perfil | Taskty</title>
       </Helmet>
-      <Stack spacing={5}>
+      <Stack spacing={6}>
         <UpdateUserData currentData={user} STATES={BUTTON_STATES} updateUserData={updateUserData} />
+        <Divider borderColor="#bdbdbd"/>
         <ChangePassword STATES={BUTTON_STATES} changePassword={changePassword} />
+        <Divider borderColor="#bdbdbd"/>
         <DeleteAccount deleteAccount={deleteAccount}/>
       </Stack>
     </>

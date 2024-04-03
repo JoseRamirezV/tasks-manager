@@ -46,18 +46,18 @@ export function DeleteAccount({ deleteAccount }) {
   };
 
   return (
-    <Stack w={"60%"} bg={"red.100"} rounded={"lg"} p={5}>
+    <Stack w={{sm: "60%"}} bg={"red.100"} rounded={"lg"} p={5}>
       <Heading as={"h2"} size={"md"} color="red.500">
         Eliminar cuenta
       </Heading>
       <Stack
         as={"form"}
-        direction={"row"}
+        direction={{base: 'column', sm: "row"}}
         align={"end"}
         gap={2}
         onSubmit={handleSubmit}
       >
-        <FormControl flex={"0 1 60%"}>
+        <FormControl flex={"0 1 60%"} isRequired>
           <FormHelperText mb={2}>
             Por favor ingrese su contraseña para poder eliminar su cuenta
           </FormHelperText>
@@ -90,7 +90,7 @@ export function DeleteAccount({ deleteAccount }) {
         <Button
           colorScheme={buttonState.schema}
           type="submit"
-          flexGrow={1}
+          w={{base: '100%', sm: 'auto'}}
           isLoading={buttonState === BUTTON_STATES.loading}
           isDisabled={
             buttonState === BUTTON_STATES.success ||

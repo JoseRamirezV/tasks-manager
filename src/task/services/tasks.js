@@ -1,6 +1,6 @@
 import moment from "moment";
 
-const URL = "http://localhost:5000/api/tasks";
+const URL = `${import.meta.env.VITE_BACKEND_URL}/tasks`;
 
 function calcDate(limitDate) {
   const limit = moment(moment(limitDate).format("YYYY-MM-DD 23:59"));

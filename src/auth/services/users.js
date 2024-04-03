@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/users";
+const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/users`;
 
 export const login = async (email, password) => {
   const res = await fetch(`${BASE_URL}/${email}&${password}`, {
@@ -92,7 +92,6 @@ export const passwordRecovery = async ({ email, code, newPassword }) => {
       body: JSON.stringify(body),
     });
     const { ok, user, error } = await res.json();
-    console.log({ ok, user, error });
     if (error) throw new Error(error);
     return { user, ok };
   } catch (error) {

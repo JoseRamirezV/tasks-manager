@@ -15,6 +15,7 @@ import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 import { TaskCard } from "@/task/components/TaskCard";
 import { TaskForm } from "@/task/components/TaskForm";
 import useTasks from "@/task/hooks/useTasks";
+import { NoTasks } from "../components/NoTasks";
 
 const TasksPage = () => {
   const {
@@ -31,6 +32,7 @@ const TasksPage = () => {
   const allChecked = checkedItems.every((task) => task.checked === true);
   const isIndeterminate =
     checkedItems.some((task) => task.checked === true) && !allChecked;
+  const selectedTasks = checkedItems.filter((check) => check.checked).length;
 
   const handleCheckAll = (e) => {
     checkAllItems(e.target.checked);
@@ -43,7 +45,12 @@ const TasksPage = () => {
       </Helmet>
       <Box as="section" py={4}>
         <HStack justifyContent={"space-between"}>
-          <Heading as={"h1"} ps="2" textAlign={"center"}>
+          <Heading
+            as={"h1"}
+            ps="2"
+            textAlign={"center"}
+            fontSize={{ base: "lg", sm: "3xl" }}
+          >
             Tareas
           </Heading>
           <HStack>
@@ -54,7 +61,7 @@ const TasksPage = () => {
               variant="solid"
               onClick={onOpen}
             >
-              <span style={{ height: "1rem" }}>Add New</span>
+              <span style={{ height: "1rem" }}>Nueva</span>
             </Button>
             <Button
               size={{ base: "xs", sm: "sm" }}
@@ -64,37 +71,46 @@ const TasksPage = () => {
               onClick={deleteTasks}
               isDisabled={checkedItems.every((item) => !item.checked)}
             >
-              <span style={{ height: "1rem" }}>Delete Selected</span>
+              <span style={{ height: "1rem" }}>
+                Eliminar {selectedTasks > 1 && "selección"}
+              </span>
             </Button>
             {checkedItems.some((item) => item.checked) && (
-              <Checkbox
-                name="checkAll"
-                isChecked={allChecked}
-                isIndeterminate={isIndeterminate}
-                onChange={handleCheckAll}
-              >
-                <Tag>
-                  {[...checkedItems.filter((check) => check.checked)].length}
-                </Tag>
-              </Checkbox>
+              <Tag>
+                <Checkbox
+                  name="checkAll"
+                  isChecked={allChecked}
+                  isIndeterminate={isIndeterminate}
+                  onChange={handleCheckAll}
+                >
+                  {selectedTasks}
+                </Checkbox>
+              </Tag>
             )}
           </HStack>
         </HStack>
         <Divider mt={2} mb={4} borderColor="#bdbdbd" />
-        <SimpleGrid columns={[1, null, 2]} spacing="2rem">
-          {data.length > 0 &&
-            data.map((data, i) => (
-              <TaskCard
-                key={data._id}
-                index={i}
-                isChecked={checkedItems[i].checked}
-                task={data}
-                checkItem={checkItem}
-                checkedItems={checkedItems}
-                editTask={editTask}
-              />
-            ))}
-        </SimpleGrid>
+        {data.length > 0 ? (
+          <SimpleGrid
+            columns={[1, null, 2]}
+            spacing="2rem"
+          >
+            {data.length > 0 &&
+              data.map((data, i) => (
+                <TaskCard
+                  key={data._id}
+                  index={i}
+                  isChecked={checkedItems[i].checked}
+                  task={data}
+                  checkItem={checkItem}
+                  checkedItems={checkedItems}
+                  editTask={editTask}
+                />
+              ))}
+          </SimpleGrid>
+        ) : (
+          <NoTasks />
+        )}
       </Box>
       <TaskForm isOpen={isOpen} onClose={onClose} addTask={addTask} />
     </>

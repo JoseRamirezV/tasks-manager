@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Link as LinkRD, useLocation } from "react-router-dom";
 
 import {
-  Box,
   Button,
   Flex,
   FormControl,
@@ -15,12 +14,13 @@ import {
   InputGroup,
   InputRightElement,
   Link,
-  Text,
-  useColorModeValue,
+  VStack,
+  useColorModeValue
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Toaster, toast } from "sonner";
+import Hero from "../components/Hero";
 import validateEmail from "../utils/validateEmail";
 
 const LoginPage = () => {
@@ -55,28 +55,29 @@ const LoginPage = () => {
         <title>Iniciar sesión | Taskty</title>
       </Helmet>
       <Flex
-        direction={"column"}
-        minH={"100vh"}
-        align={"center"}
-        justify={"center"}
+        direction={{ base: "column", md: "row" }}
+        w={"90%"}
+        rowGap={8}
+        p={4}
+        m={4}
+        align={"start"}
+        justify={"space-around"}
+        position={'relative'}
       >
-        <Heading as="h1" mx="auto" fontSize={"4xl"}>
-          Taskty.co
-        </Heading>
-        <Text fontSize={"lg"} mx="auto" py={2} color={"gray.600"}>
-          Iniciar Sesión
-        </Text>
-        <Box
+        <Hero />
+        <VStack
           rounded={"lg"}
+          shadow={"lg"}
           bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
           p={8}
-          mt={4}
         >
+          <Heading fontSize={"lg"} py={2} color={"gray.600"}>
+            Inicia Sesión
+          </Heading>
           <form onSubmit={handleLogin}>
             <Flex direction={"column"} gap={4}>
               <FormControl isRequired isInvalid={isInvalid}>
-                <FormLabel sx={{ "&>span": { display: "none" } }}>
+                <FormLabel requiredIndicator={null}>
                   Correo electrónico
                 </FormLabel>
                 <Input
@@ -137,19 +138,16 @@ const LoginPage = () => {
               </Flex>
               <Button
                 type="submit"
-                bg={"blue.400"}
-                color={"white"}
-                mt={4}
-                _hover={{
-                  bg: "blue.500",
-                }}
+                colorScheme="blue"
               >
                 Iniciar sesión
               </Button>
             </Flex>
           </form>
-        </Box>
-        <Toaster richColors />
+        </VStack>
+        <span style={{position: 'absolute'}}>
+        <Toaster richColors/>
+        </span>
       </Flex>
     </>
   );
