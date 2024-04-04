@@ -4,7 +4,8 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import ForgotPassPage from "@/auth/pages/ForgotPassPage";
 import LoginPage from "@/auth/pages/LoginPage";
 
-import SignUpPage from "@/auth/pages/SignUpPage";
+
+import SignUpPage from "./pages/SignUpPage";
 import VerifyAccount from "@/auth/pages/VerifyAccount";
 import { isAuthenticated } from "@/auth/services/users";
 import { AuthContext } from "@/context/AuthContext";
