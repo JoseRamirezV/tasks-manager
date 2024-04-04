@@ -1,9 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import { TaskRouter } from "@/task/TaskRouter";
-import { AuthContextProvider } from "@/context/AuthContext";
-import { AuthRouter } from "@/auth/AuthRouter";
 import { Helmet } from "react-helmet-async";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import { AuthContextProvider } from "@/context/AuthContext";
+import AuthRouter from "@/auth/AuthRouter";
+import TaskRouter from "@/tasks/TaskRouter";
 
 export default function AppRouter() {
   return (
