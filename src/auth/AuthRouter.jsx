@@ -3,13 +3,14 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import ForgotPassPage from "@/auth/pages/ForgotPassPage";
 import LoginPage from "@/auth/pages/LoginPage";
+
 import SignUpPage from "@/auth/pages/SignUpPage";
+import VerifyAccount from "@/auth/pages/VerifyAccount";
 import { isAuthenticated } from "@/auth/services/users";
 import { AuthContext } from "@/context/AuthContext";
 import { useContext, useEffect } from "react";
-import VerifyAccount from "./pages/VerifyAccount";
 
-export const AuthRouter = () => {
+export default function AuthRouter() {
   const { isLogged, token, email } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -42,4 +43,4 @@ export const AuthRouter = () => {
       </Routes>
     </Center>
   );
-};
+}

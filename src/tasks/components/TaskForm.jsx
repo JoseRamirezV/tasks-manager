@@ -36,7 +36,7 @@ const TASK_PLACEHOLDERS = [
   },
 ];
 
-export function TaskForm({
+export default function TaskForm({
   isOpen,
   onClose,
   setShowTaskForm,

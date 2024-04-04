@@ -20,8 +20,8 @@ import { Helmet } from "react-helmet-async";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link as LinkRD } from "react-router-dom";
 import { Toaster } from "sonner";
-import { useLogin } from "../hooks/useLogIn";
-import validateEmail from "../utils/validateEmail";
+import { useLogin } from "@/auth/hooks/useLogIn";
+import validateEmail from "@/auth/utils/validateEmail";
 
 export default function SignUpPage() {
   const { createUser } = useLogin();

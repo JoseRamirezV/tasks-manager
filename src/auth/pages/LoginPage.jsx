@@ -20,8 +20,8 @@ import {
 import { Helmet } from "react-helmet-async";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Toaster, toast } from "sonner";
-import Hero from "../components/Hero";
-import validateEmail from "../utils/validateEmail";
+import Hero from "@/auth/components/Hero";
+import validateEmail from "@/auth/utils/validateEmail";
 
 const LoginPage = () => {
   const { authenticateUser } = useLogin();

@@ -1,6 +1,6 @@
 import { Heading, Text, VStack } from "@chakra-ui/react";
 
-export function NoTasks() {
+export default function NoTasks() {
   return (
     <>
       <VStack mt={10}>

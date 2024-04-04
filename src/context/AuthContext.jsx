@@ -4,7 +4,7 @@ import { createContext, useReducer } from "react";
 /**
  * @description Estado inicial y objeto que define el contexto de autenticación
  */
-export const InitialState = {
+const InitialState = {
   _id: "",
   email: "",
   user: "",
