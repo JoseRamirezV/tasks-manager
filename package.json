@@ -1,9 +1,9 @@
 {
+  "homepage": "http://JoseRamirezV/github.io/tasks-manager/",
   "name": "vite-tasks-manager",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "JoseRamirezV.github.io/task-manager",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
