@@ -1,8 +1,8 @@
 import { Helmet } from "react-helmet-async";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 
-import { AuthContextProvider } from "@/context/AuthContext";
 import AuthRouter from "@/auth/AuthRouter";
+import { AuthContextProvider } from "@/context/AuthContext";
 import TaskRouter from "@/tasks/TaskRouter";
 
 export default function AppRouter() {
@@ -12,13 +12,13 @@ export default function AppRouter() {
         <title>Taskty</title>
       </Helmet>
       <AuthContextProvider>
-        <BrowserRouter>
+        <HashRouter>
           <Routes>
             <Route path={"auth/*"} element={<AuthRouter />} />
             <Route path={"/*"} element={<TaskRouter />} />
             <Route path={"*"} element={<h1>Error</h1>} />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </AuthContextProvider>
     </>
   );
