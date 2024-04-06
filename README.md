@@ -1,5 +1,5 @@
 # Sistema de tareas con notificación a Wh
-Sistema que permite desde un sitio web gestionar tares de manera rápida y sencilla; además, permite recibir notificaciones mediante whatsapp.
+Sistema que permite desde un sitio web gestionar tares de manera rápida y sencilla; además, permite recibir notificaciones mediante Gmail.
 
 **Estado**: *En progreso.*
 

@@ -1,9 +1,9 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import { TaskRouter } from "./task/TaskRouter";
-import { AuthContextPovider } from "./auth/context/AuthContext";
-import { AuthRuter } from "./auth/AuthRuter";
 import { Helmet } from "react-helmet-async";
+import { HashRouter, Route, Routes } from "react-router-dom";
+
+import AuthRouter from "@/auth/AuthRouter";
+import { AuthContextProvider } from "@/context/AuthContext";
+import TaskRouter from "@/tasks/TaskRouter";
 
 export default function AppRouter() {
   return (
@@ -11,15 +11,15 @@ export default function AppRouter() {
       <Helmet>
         <title>Taskty</title>
       </Helmet>
-      <AuthContextPovider>
-        <BrowserRouter>
+      <AuthContextProvider>
+        <HashRouter>
           <Routes>
-            <Route path={"auth/*"} element={<AuthRuter />} />
+            <Route path={"auth/*"} element={<AuthRouter />} />
             <Route path={"/*"} element={<TaskRouter />} />
             <Route path={"*"} element={<h1>Error</h1>} />
           </Routes>
-        </BrowserRouter>
-      </AuthContextPovider>
+        </HashRouter>
+      </AuthContextProvider>
     </>
   );
 }
