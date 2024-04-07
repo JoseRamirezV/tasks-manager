@@ -6,7 +6,7 @@ export const validateDates = ({ today, limitDate, notificationDate, notify },tri
   }
   const validNotificationDate =
     !notify ||
-    (notificationDate > today && notificationDate <= notificationDate);
+    (notificationDate > today && notificationDate <= limitDate);
 
   if (!validNotificationDate)
     triggerToast(

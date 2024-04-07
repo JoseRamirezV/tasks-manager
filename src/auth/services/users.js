@@ -4,9 +4,9 @@ export const login = async (email, password) => {
   const res = await fetch(`${BASE_URL}/${email}&${password}`, {
     credentials: "include",
   });
-  const { token, user, error } = await res.json();
+  const { user, error } = await res.json();
   if (!user) return { error };
-  return { userData: user, token };
+  return { userData: user };
 };
 
 export const signUp = async (data) => {
@@ -19,13 +19,13 @@ export const signUp = async (data) => {
     body: JSON.stringify({
       ...data,
       temporalToken,
-      verificationUrl: `${window.location.origin}/auth/verify-account?email=${data.email}&token=${temporalToken}`,
+      verificationUrl: `${window.location.origin}/tasks-manager/#/auth/verify-account?email=${data.email}&token=${temporalToken}`,
     }),
   });
   return await res.json();
 };
 
-export const update = async ({ token, _id, data, needsVerification }) => {
+export const update = async ({ _id, data, needsVerification }) => {
   if (needsVerification) {
     needsVerification.temporalToken = generateTemporalToken();
     needsVerification.verificationUrl = `${window.location.origin}/auth/verify-account?email=${data.email}&token=${needsVerification.temporalToken}`;
@@ -34,14 +34,14 @@ export const update = async ({ token, _id, data, needsVerification }) => {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
     },
+    credentials: "include",
     body: JSON.stringify({ ...data, needsVerification }),
   });
   return await res.json();
 };
 
-export const deleteUser = async ({ _id, token, password }) => {
+export const deleteUser = async ({ _id, password }) => {
   try {
     await new Promise((resolve) =>
       setTimeout(() => {
@@ -50,9 +50,7 @@ export const deleteUser = async ({ _id, token, password }) => {
     );
     const res = await fetch(`${BASE_URL}/delete/${_id}&${password}`, {
       method: "DELETE",
-      headers: {
-        authorization: `Bearer ${token}`,
-      },
+      credentials: "include",
     });
     const { ok, error } = await res.json();
     if (error) throw new Error(error);
@@ -62,18 +60,13 @@ export const deleteUser = async ({ _id, token, password }) => {
   }
 };
 
-export const changePassword = async ({
-  token,
-  _id,
-  oldPassword,
-  newPassword,
-}) => {
+export const changePassword = async ({ _id, oldPassword, newPassword }) => {
   const res = await fetch(`${BASE_URL}/change-password/${_id}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      authorization: `Bearer ${token}`,
     },
+    credentials: "include",
     body: JSON.stringify({ oldPassword, newPassword }),
   });
   const status = await res.json();
@@ -99,15 +92,14 @@ export const passwordRecovery = async ({ email, code, newPassword }) => {
   }
 };
 
-export const isAuthenticated = async (token) => {
-  if (!token) return;
-  const res = await fetch(`${BASE_URL}/isLogged/${token}`);
-  const { error, ...userData } = await res.json();
-  if (error) return { error };
-  return userData;
+export const verifyToken = async () => {
+  const res = await fetch(`${BASE_URL}/isLogged`, {
+    credentials: "include",
+  });
+  return await res.json();
 };
 
-export const verify = async (data) => {
+export const verifyAccount = async (data) => {
   const res = await fetch(`${BASE_URL}/verify`, {
     method: "PUT",
     headers: {

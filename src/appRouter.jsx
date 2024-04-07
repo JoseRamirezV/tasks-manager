@@ -11,15 +11,15 @@ export default function AppRouter() {
       <Helmet>
         <title>Taskty</title>
       </Helmet>
-      <AuthContextProvider>
-        <HashRouter>
+      <HashRouter>
+        <AuthContextProvider>
           <Routes>
             <Route path={"auth/*"} element={<AuthRouter />} />
             <Route path={"/*"} element={<TaskRouter />} />
             <Route path={"*"} element={<h1>Error</h1>} />
           </Routes>
-        </HashRouter>
-      </AuthContextProvider>
+        </AuthContextProvider>
+      </HashRouter>
     </>
   );
 }

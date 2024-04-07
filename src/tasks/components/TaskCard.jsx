@@ -88,7 +88,7 @@ export default function TaskCard({
         >
           <Checkbox
             isChecked={isChecked}
-            id={task.id}
+            id={task._id}
             style={{ pointerEvents: "none" }}
           />
         </Fade>

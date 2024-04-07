@@ -15,7 +15,7 @@ import {
   InputRightElement,
   Link,
   VStack,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -27,6 +27,7 @@ const LoginPage = () => {
   const { authenticateUser } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
   const [isInvalid, setIsInvalid] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const { state } = useLocation();
 
   useEffect(() => {
@@ -40,13 +41,14 @@ const LoginPage = () => {
 
   function handleLogin(event) {
     event.preventDefault();
+    setIsLoading(true);
     const form = event.currentTarget;
     const { email, password } = Object.fromEntries(new window.FormData(form));
     if (!validateEmail(email)) {
       setIsInvalid(true);
       return;
     }
-    authenticateUser(email, password);
+    authenticateUser(email, password).then(() => setIsLoading(false));
   }
 
   return (
@@ -62,7 +64,7 @@ const LoginPage = () => {
         m={4}
         align={"start"}
         justify={"space-around"}
-        position={'relative'}
+        position={"relative"}
       >
         <Hero />
         <VStack
@@ -136,17 +138,14 @@ const LoginPage = () => {
                   Registrarme
                 </Link>
               </Flex>
-              <Button
-                type="submit"
-                colorScheme="blue"
-              >
+              <Button type="submit" colorScheme="blue" isLoading={isLoading}>
                 Iniciar sesión
               </Button>
             </Flex>
           </form>
         </VStack>
-        <span style={{position: 'absolute'}}>
-        <Toaster richColors/>
+        <span style={{ position: "absolute" }}>
+          <Toaster richColors />
         </span>
       </Flex>
     </>

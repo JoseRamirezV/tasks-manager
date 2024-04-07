@@ -1,26 +1,18 @@
 import { Center } from "@chakra-ui/react";
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import ForgotPassPage from "@/auth/pages/ForgotPassPage";
 import LoginPage from "@/auth/pages/LoginPage";
 
-
-import SignUpPage from "./pages/SignUpPage";
 import VerifyAccount from "@/auth/pages/VerifyAccount";
-import { isAuthenticated } from "@/auth/services/users";
 import { AuthContext } from "@/context/AuthContext";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
+import SignUpPage from "./pages/SignUpPage";
 
 export default function AuthRouter() {
-  const { isLogged, token, email } = useContext(AuthContext);
-  const navigate = useNavigate();
+  const { isLogged, email } = useContext(AuthContext);
 
-  useEffect(() => {
-    if (!token) return;
-    isAuthenticated(token).then((authenticated) => {
-      if (authenticated && isLogged) navigate("/");
-    });
-  });
+  if (isLogged) return <Navigate to={'/'}/>;
 
   return (
     <Center
@@ -40,7 +32,7 @@ export default function AuthRouter() {
           exact
           element={<VerifyAccount email={email} />}
         />
-        <Route path={""} exact element={<Navigate to={"sign-in"} />} />
+        <Route path={"*"} exact element={<Navigate to={"sign-in"}/>} />
       </Routes>
     </Center>
   );
