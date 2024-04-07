@@ -29,7 +29,7 @@ export default function VerifyAccount() {
   });
 
   useEffect(()=>{
-    if (!state) {
+    if (!state && data.email) {
       verifyAccount(data)
     }
   },[])
@@ -124,6 +124,7 @@ export default function VerifyAccount() {
                 _hover={{
                   bg: "blue.500",
                 }}
+                disabled={!state}
               >
                 Verificar
               </Button>

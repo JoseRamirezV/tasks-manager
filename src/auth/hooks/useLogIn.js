@@ -4,7 +4,7 @@ import {
   login as loginService,
   passwordRecovery,
   signUp,
-  verify,
+  verifyAccount as verifyAccountService,
 } from "@/auth/services/users";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +27,7 @@ export function useLogin() {
   }, [error]);
 
   const authenticateUser = async (email, password) => {
-    const { userData, token, error } = await loginService(email, password);
+    const { userData, error } = await loginService(email, password);
     if (error) {
       setError(
         "Credenciales incorrectas, por favor verifique su usuario o contraseña"
@@ -36,7 +36,6 @@ export function useLogin() {
     }
     login({
       ...userData,
-      token,
       isLogged: true,
     });
   };
@@ -111,7 +110,7 @@ export function useLogin() {
   const verifyAccount = async (data) => {
     const promise = () =>
       new Promise((resolve, reject) => {
-        verify(data).then(({ userData, invalid }) => {
+        verifyAccountService(data).then(({ userData, invalid }) => {
           if (invalid) reject({ invalid });
           resolve(userData);
         });

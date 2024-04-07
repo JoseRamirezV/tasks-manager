@@ -138,7 +138,11 @@ export default function TaskForm({
               <Input
                 name="notificationDate"
                 type="datetime-local"
-                defaultValue={notify ? taskToEditData?.notificationDate : moment().format("YYYY-MM-DD HH:mm")}
+                defaultValue={
+                  notify && taskToEditData?.notificationDate
+                    ? taskToEditData.notificationDate
+                    : moment().format("YYYY-MM-DD HH:mm")
+                }
                 isDisabled={!notify}
               ></Input>
             </FormControl>
@@ -152,20 +156,17 @@ export default function TaskForm({
               value={true}
               onChange={(e) => setNotify(e.currentTarget.checked)}
             >
-              Notify me
+              Notifícame
             </Checkbox>
             <Button
               type="submit"
               colorScheme="blue"
               size={{ base: "xs", sm: "sm" }}
             >
-              {taskToEditData ? "Confirm" : "Save"}
+              Guardar
             </Button>
-            <Button
-              onClick={closeForm}
-              size={{ base: "xs", sm: "sm" }}
-            >
-              Cancel
+            <Button onClick={closeForm} size={{ base: "xs", sm: "sm" }}>
+              Cancelar
             </Button>
           </ModalFooter>
         </form>

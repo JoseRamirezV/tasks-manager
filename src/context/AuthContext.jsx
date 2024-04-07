@@ -12,7 +12,6 @@ const InitialState = {
   secondName: "",
   firstLastName: "",
   secondLastName: "",
-  token: "",
   verified: false,
   isLogged: false,
 };
@@ -54,12 +53,12 @@ export function AuthContextProvider({ children }) {
   }
 
   function logout() {
-    Cookies.remove('token')
+    Cookies.remove("token");
     dispatch({
       type: "LOGOUT",
     });
   }
-
+  
   return (
     <AuthContext.Provider
       value={{

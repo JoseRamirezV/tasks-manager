@@ -11,7 +11,7 @@ import moment from "moment";
 import { validateDates } from "@/tasks/utils/datesValidator";
 
 const useTasks = () => {
-  const { email, token, verified } = useContext(AuthContext);
+  const { email, token, verified, logout } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [checkedItems, setCheckedItems] = useState([
     {
@@ -19,14 +19,22 @@ const useTasks = () => {
       checked: false,
     },
   ]);
-
   useEffect(() => {
     if (email !== "") getTasks();
   }, [email]);
 
   const getTasks = async () => {
-    const userTasks = await getUserTasks(email, token);
-    if (!userTasks) return;
+    const {userTasks, error} = await getUserTasks(email, token);
+
+    if (error === '401') return toast.error("Error",{
+      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
+      onDismiss: () => logout(),
+      onAutoClose: () => logout()
+    });
+
+    if (error) return triggerToast(error);
+
+    if(JSON.stringify(userTasks) === JSON.stringify(data)) return
     setData(userTasks);
     setCheckedItems(
       new Array(userTasks.length).fill({
@@ -59,13 +67,22 @@ const useTasks = () => {
       triggerToast
     );
     if (!validDates) return {};
-    newTask.limitDate = limitDate
+
+    newTask.limitDate = limitDate;
+
     const { task: savedTask, error } = await addNewTask(newTask, token);
+    if (error === '401') return toast.error("Error",{
+      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
+      onDismiss: () => logout(),
+      onAutoClose: () => logout()
+    });
+
     if (error) {
       triggerToast(error);
       return {};
     }
     const newData = [...data, { ...savedTask }];
+
     setData(newData);
     setCheckedItems(
       new Array(newData.length).fill({
@@ -100,8 +117,13 @@ const useTasks = () => {
     );
 
     if (!validDates) return {};
-    newData.limitDate = limitDate
+    newData.limitDate = limitDate;
     const { error, task } = await updateTask(_id, newData, token);
+    if (error === '401') return toast.error("Error",{
+      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
+      onDismiss: () => logout(),
+      onAutoClose: () => logout()
+    });
     if (error) {
       triggerToast(error);
       return {};
@@ -123,6 +145,11 @@ const useTasks = () => {
       return acc;
     }, []);
     const { error } = serviceDeleteTasks(tasksToDelete, token);
+    if (error === '401') return toast.error("Error",{
+      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
+      onDismiss: () => logout(),
+      onAutoClose: () => logout()
+    });
     if (error) return;
     setData([...data.filter((task) => !tasksToDelete.includes(task._id))]);
     checkAllItems(false);
@@ -146,7 +173,7 @@ const useTasks = () => {
   };
 
   const triggerToast = (message) => {
-    toast.warning("Advertencia", {
+    toast.error("Error", {
       description: message,
       duration: 2000,
     });
