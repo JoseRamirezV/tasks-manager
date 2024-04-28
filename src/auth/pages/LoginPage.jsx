@@ -1,7 +1,3 @@
-import { useLogin } from "@/auth/hooks/useLogIn";
-import { useEffect, useState } from "react";
-import { Link as LinkRD, useLocation } from "react-router-dom";
-
 import {
   Button,
   Flex,
@@ -17,11 +13,15 @@ import {
   VStack,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { Link as LinkRD, useLocation } from "react-router-dom";
 import { Toaster, toast } from "sonner";
+
 import Hero from "@/auth/components/Hero";
+import { useLogin } from "@/auth/hooks/useLogIn";
 import validateEmail from "@/auth/utils/validateEmail";
+import { EyeIcon, EyeSlashIcon } from "@/icons/EyeIcons";
 
 const LoginPage = () => {
   const { authenticateUser } = useLogin();
@@ -41,14 +41,14 @@ const LoginPage = () => {
 
   function handleLogin(event) {
     event.preventDefault();
-    setIsLoading(true);
     const form = event.currentTarget;
     const { email, password } = Object.fromEntries(new window.FormData(form));
     if (!validateEmail(email)) {
       setIsInvalid(true);
       return;
     }
-    authenticateUser(email, password).then(() => setIsLoading(false));
+    setIsLoading(true);
+    authenticateUser(email, password).finally(() => setIsLoading(false));
   }
 
   return (
@@ -110,14 +110,9 @@ const LoginPage = () => {
                       size="sm"
                       variant="ghost"
                       aria-label="Toggle password visibility"
+                      tabIndex={-1}
                       isRound
-                      icon={
-                        showPassword ? (
-                          <AiOutlineEyeInvisible />
-                        ) : (
-                          <AiOutlineEye />
-                        )
-                      }
+                      icon={showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                     />
                   </InputRightElement>
                 </InputGroup>

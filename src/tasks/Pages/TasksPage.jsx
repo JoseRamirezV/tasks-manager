@@ -9,33 +9,56 @@ import {
   Tag,
   useDisclosure,
 } from "@chakra-ui/react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { AiOutlineDelete, AiOutlinePlus } from "react-icons/ai";
 
-import TaskCard from "@/tasks/components/TaskCard";
-import TaskForm from "@/tasks/components/TaskForm";
-import useTasks from "@/tasks/hooks/useTasks";
+import PlusIcon from "@/icons/PlusIcon";
+import DeleteIcon from "@/icons/DeleteIcon";
 import NoTasks from "@/tasks/components/NoTasks";
+import TaskCard from "@/tasks/components/TaskCard";
+import useTasks from "@/tasks/hooks/useTasks";
+import TaskFormSkeleton from "../components/TaskFormSkeleton";
+
+const TaskForm = lazy(() => import("@/tasks/components/TaskForm"));
 
 export default function TasksPage() {
   const {
+    getTasks,
+    deleteTasks,
     addTask,
     editTask,
-    deleteTasks,
     checkItem,
     checkAllItems,
     data,
     checkedItems,
+    email,
   } = useTasks();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [renderForm, setRenderForm] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const allChecked = checkedItems.every((task) => task.checked === true);
   const isIndeterminate =
-    checkedItems.some((task) => task.checked === true) && !allChecked;
+    checkedItems.some((task) => !!task.checked) && !allChecked;
   const selectedTasks = checkedItems.filter((check) => check.checked).length;
+
+  useEffect(() => {
+    if (email !== "") getTasks();
+  }, [email]);
 
   const handleCheckAll = (e) => {
     checkAllItems(e.target.checked);
+  };
+
+  const handleDeleteTasks = () => {
+    setIsLoading(true);
+    deleteTasks().finally(() => setIsLoading(false));
+  };
+
+  const openForm = () => {
+    setRenderForm(true);
+    onOpen();
   };
 
   return (
@@ -56,24 +79,26 @@ export default function TasksPage() {
           <HStack>
             <Button
               size={{ base: "xs", sm: "sm" }}
-              leftIcon={<AiOutlinePlus />}
+              leftIcon={<PlusIcon />}
               colorScheme="teal"
               variant="solid"
-              onClick={onOpen}
+              onClick={openForm}
             >
-              <span style={{ height: "1rem" }}>Nueva</span>
+              Nueva
             </Button>
             <Button
+              isLoading={isLoading}
+              loadingText={`Borrando${
+                selectedTasks > 1 ? " selección" : ""
+              }...`}
               size={{ base: "xs", sm: "sm" }}
-              leftIcon={<AiOutlineDelete />}
+              leftIcon={<DeleteIcon />}
               colorScheme="red"
               variant="solid"
-              onClick={deleteTasks}
+              onClick={handleDeleteTasks}
               isDisabled={checkedItems.every((item) => !item.checked)}
             >
-              <span style={{ height: "1rem" }}>
-                Eliminar {selectedTasks > 1 && "selección"}
-              </span>
+              Eliminar {selectedTasks > 1 && "selección"}
             </Button>
             {checkedItems.some((item) => item.checked) && (
               <Tag>
@@ -89,7 +114,7 @@ export default function TasksPage() {
             )}
           </HStack>
         </HStack>
-        <Divider mt={2} mb={4} borderColor="#bdbdbd" />
+        <Divider mt={2} mb={4} borderColor="gray.400" />
         {data.length > 0 ? (
           <SimpleGrid columns={[1, null, 2]} spacing="2rem">
             {data.length > 0 &&
@@ -109,7 +134,11 @@ export default function TasksPage() {
           <NoTasks />
         )}
       </Box>
-      <TaskForm isOpen={isOpen} onClose={onClose} addTask={addTask} />
+      <Suspense fallback={<TaskFormSkeleton />}>
+        {renderForm && (
+          <TaskForm isOpen={isOpen} onClose={onClose} addTask={addTask} />
+        )}
+      </Suspense>
     </>
   );
 }

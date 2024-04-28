@@ -10,7 +10,8 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+
+import { EyeIcon, EyeSlashIcon } from "@/icons/EyeIcons";
 
 const BUTTON_STATES = {
   default: {
@@ -31,7 +32,7 @@ const BUTTON_STATES = {
   },
 };
 
-export function DeleteAccount({ deleteAccount }) {
+export default function DeleteAccount({ deleteAccount }) {
   const [buttonState, setButtonState] = useState(BUTTON_STATES.default);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -46,18 +47,19 @@ export function DeleteAccount({ deleteAccount }) {
   };
 
   return (
-    <Stack w={{sm: "60%"}} bg={"red.100"} rounded={"lg"} p={5}>
+    <Stack w={{ sm: "60%" }} bg={"red.100"} rounded={"lg"} p={5}>
       <Heading as={"h2"} size={"md"} color="red.500">
         Eliminar cuenta
       </Heading>
       <Stack
         as={"form"}
-        direction={{base: 'column', sm: "row"}}
+        direction={{ base: "column", sm: "row" }}
         align={"end"}
-        gap={2}
+        rowGap={4}
+        columnGap={2}
         onSubmit={handleSubmit}
       >
-        <FormControl flex={"0 1 60%"} isRequired>
+        <FormControl flex={"0 0 65%"} isRequired>
           <FormHelperText mb={2}>
             Por favor ingrese su contraseña para poder eliminar su cuenta
           </FormHelperText>
@@ -67,7 +69,7 @@ export function DeleteAccount({ deleteAccount }) {
               name="password"
               placeholder={"Contraseña"}
               variant="filled"
-              bg={"white"}
+              bg={"gray.50"}
               _hover={{}}
               _focusVisible={{ bg: "white", outlineStyle: "none" }}
               onChange={() => {
@@ -77,11 +79,12 @@ export function DeleteAccount({ deleteAccount }) {
             />
             <InputRightElement>
               <IconButton
+                size={"sm"}
                 variant={"ghost"}
+                aria-label="Toggle password visibility"
+                isRound
                 tabIndex={-1}
-                icon={
-                  showPassword ? <AiOutlineEye /> : <AiOutlineEyeInvisible />
-                }
+                icon={showPassword ? <EyeSlashIcon /> : <EyeIcon />}
                 onClick={() => setShowPassword(!showPassword)}
               />
             </InputRightElement>
@@ -90,7 +93,8 @@ export function DeleteAccount({ deleteAccount }) {
         <Button
           colorScheme={buttonState.schema}
           type="submit"
-          w={{base: '100%', sm: 'auto'}}
+          flexGrow={1}
+          w={{ base: "100%", sm: "auto" }}
           isLoading={buttonState === BUTTON_STATES.loading}
           isDisabled={
             buttonState === BUTTON_STATES.success ||

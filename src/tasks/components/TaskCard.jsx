@@ -1,5 +1,5 @@
+import moment from "@/tasks/config/moment";
 import {
-  Box,
   Card,
   CardBody,
   CardFooter,
@@ -9,16 +9,17 @@ import {
   HStack,
   Heading,
   Icon,
-  Spinner,
+  IconButton,
   Text,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Suspense, lazy, useEffect, useState } from "react";
-import { AiOutlineEdit } from "react-icons/ai";
-import { MdOutlineAlarm, MdOutlineAlarmOn } from "react-icons/md";
 import PropTypes from "prop-types";
-import moment from "@/tasks/config/moment";
+import { Suspense, lazy, useEffect, useState } from "react";
+
+import { AlarmIcon, AlarmOnIcon } from "@/AlarmIcons";
+import EditIcon from "@/icons/EditIcon";
+import TaskFormSkeleton from "./TaskFormSkeleton";
 
 const TaskForm = lazy(() => import("@/tasks/components/TaskForm"));
 
@@ -42,8 +43,7 @@ export default function TaskCard({
     onClose: closeModal,
   } = useDisclosure();
   const [showTaskForm, setShowTaskForm] = useState(false);
-
-  let allowClick = true;
+  const [showDaysLeft, setShowDaysLeft] = useState(false);
 
   useEffect(() => {
     if (isChecked) {
@@ -63,15 +63,16 @@ export default function TaskCard({
   };
 
   const handleClick = (id) => {
-    if (!allowClick) return;
     const newValue = checkedItems[index].checked;
     checkItem(index, !newValue, id);
   };
 
-  const handleEdit = () => {
+  const handleEdit = (e) => {
+    e.stopPropagation();
     setShowTaskForm(true);
     openModal();
   };
+  
   return (
     <>
       <Card
@@ -119,6 +120,7 @@ export default function TaskCard({
           <HStack pos={"absolute"} right={2} bottom={2} gap={1}>
             {task.notify && !task.notified && (
               <Tooltip
+                size={"sm"}
                 label={`Se notificará ${moment(
                   task.notificationDate
                 ).fromNow()}`}
@@ -126,14 +128,19 @@ export default function TaskCard({
                 bg={"gray.50"}
                 color={"gray.700"}
                 hasArrow
+                isOpen={window.innerWidth < 768 ? showDaysLeft : undefined}
               >
                 <span>
                   <Icon
-                    as={MdOutlineAlarm}
+                    as={AlarmIcon}
                     opacity={0.5}
                     my={"auto"}
                     display={"block"}
                     boxSize={5}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShowDaysLeft(!showDaysLeft);
+                    }}
                   />
                 </span>
               </Tooltip>
@@ -148,8 +155,8 @@ export default function TaskCard({
               >
                 <span>
                   <Icon
-                    as={MdOutlineAlarmOn}
-                    color={"green.500"}
+                    as={AlarmOnIcon}
+                    fill={"green.600"}
                     my={"auto"}
                     display={"block"}
                     boxSize={5}
@@ -157,27 +164,21 @@ export default function TaskCard({
                 </span>
               </Tooltip>
             )}
-            <Box
-              as={"button"}
+            <IconButton
+              isRound
+              variant={"ghost"}
               onClick={handleEdit}
-              p={2}
               transition={"all .2s ease"}
-              _focus={{ color: "blue.500", outline: "none" }}
-              _hover={{ color: "blue.500" }}
-              onMouseOver={() => (allowClick = false)}
-              onMouseLeave={() => (allowClick = true)}
-            >
-              <Icon as={AiOutlineEdit} boxSize={5} display={"block"} />
-            </Box>
+              icon={<EditIcon boxSize={5} />}
+            />
           </HStack>
         </CardFooter>
       </Card>
-      <Suspense fallback={<Spinner/>}>
+      <Suspense fallback={<TaskFormSkeleton />}>
         {showTaskForm && (
           <TaskForm
             isOpen={modal}
             onClose={closeModal}
-            setShowTaskForm={setShowTaskForm}
             taskToEditData={task}
             editTask={editTask}
           />

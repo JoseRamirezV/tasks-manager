@@ -6,7 +6,11 @@ import {
   FormErrorMessage,
   FormHelperText,
   Heading,
+  Icon,
+  IconButton,
   Input,
+  InputGroup,
+  InputRightElement,
   Link,
   PinInput,
   PinInputField,
@@ -18,13 +22,19 @@ import { useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link as LinkRD } from "react-router-dom";
 import { Toaster } from "sonner";
-import { useLogin } from "@/auth/hooks/useLogIn";
+
 import validateEmail from "@/auth/utils/validateEmail";
+import { useLogin } from "@/auth/hooks/useLogIn";
+import { EyeIcon, EyeSlashIcon } from "@/icons/EyeIcons";
 
 export default function ForgotPassPage() {
   const { forgotPassword } = useLogin();
   const [showCodeInput, setShowCodeInput] = useState(false);
   const [isInvalid, setIsInvalid] = useState();
+  const [showPassword, setShowPassword] = useState({
+    password: false,
+    verification: false,
+  });
   const pinInput = useRef();
 
   const handleSubmit = async (e) => {
@@ -41,7 +51,7 @@ export default function ForgotPassPage() {
       password,
       passVerification,
     });
-    if(error) return
+    if (error) return;
     setShowCodeInput(true);
   };
 
@@ -53,7 +63,7 @@ export default function ForgotPassPage() {
       <Flex minH={"100vh"} align={"center"} justify={"center"}>
         <Stack
           spacing={6}
-          w={{base: 'xs', sm: 'md'}}
+          w={{ base: "xs", sm: "md" }}
           bg={useColorModeValue("white", "gray.700")}
           rounded={"xl"}
           boxShadow={"lg"}
@@ -87,14 +97,14 @@ export default function ForgotPassPage() {
               </FormControl>
               <Collapse in={showCodeInput}>
                 {showCodeInput && (
-                  <Stack spacing={4}>
+                  <Stack spacing={4} px={1}>
                     <FormControl
                       id="code"
                       display={"flex"}
                       justifyContent={"space-between"}
                     >
                       <PinInput
-                        size={"lg"}
+                        size={{ base: "sm", sm: "lg" }}
                         onComplete={(value) => (pinInput.current = value)}
                       >
                         <PinInputField
@@ -130,20 +140,68 @@ export default function ForgotPassPage() {
                       </PinInput>
                     </FormControl>
                     <FormControl>
-                      <Input
-                        name="password"
-                        type="password"
-                        textAlign={"center"}
-                        placeholder="Contraseña"
-                      />
+                      <InputGroup>
+                        <Input
+                          name="password"
+                          type={showPassword.password ? "text" : "password"}
+                          textAlign={"center"}
+                          placeholder="Contraseña"
+                        />
+                        <InputRightElement>
+                          <IconButton
+                            size={"sm"}
+                            variant={"ghost"}
+                            aria-label="Toggle password visibility"
+                            isRound
+                            tabIndex={-1}
+                            onClick={() =>
+                              setShowPassword((showPassword) => ({
+                                ...showPassword,
+                                password: !showPassword.password,
+                              }))
+                            }
+                            icon={
+                              showPassword.password ? (
+                                <Icon as={EyeSlashIcon} />
+                              ) : (
+                                <Icon as={EyeIcon} />
+                              )
+                            }
+                          />
+                        </InputRightElement>
+                      </InputGroup>
                     </FormControl>
                     <FormControl>
-                      <Input
-                        name="passVerification"
-                        type="password"
-                        textAlign={"center"}
-                        placeholder="Contraseña"
-                      />
+                      <InputGroup>
+                        <Input
+                          name="passVerification"
+                          type={showPassword.verification ? "text" : "password"}
+                          textAlign={"center"}
+                          placeholder="Contraseña"
+                        />
+                        <InputRightElement>
+                          <IconButton
+                            size={"sm"}
+                            variant={"ghost"}
+                            aria-label="Toggle password visibility"
+                            isRound
+                            tabIndex={-1}
+                            onClick={() =>
+                              setShowPassword((showPassword) => ({
+                                ...showPassword,
+                                verification: !showPassword.verification,
+                              }))
+                            }
+                            icon={
+                              showPassword.verification ? (
+                                <Icon as={EyeSlashIcon} />
+                              ) : (
+                                <Icon as={EyeIcon} />
+                              )
+                            }
+                          />
+                        </InputRightElement>
+                      </InputGroup>
                     </FormControl>
                   </Stack>
                 )}

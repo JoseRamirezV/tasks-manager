@@ -7,6 +7,7 @@ import {
   HStack,
   Heading,
   Icon,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
@@ -17,11 +18,12 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { Link as LinkRD } from "react-router-dom";
 import { Toaster } from "sonner";
+
 import { useLogin } from "@/auth/hooks/useLogIn";
 import validateEmail from "@/auth/utils/validateEmail";
+import { EyeIcon, EyeSlashIcon } from "@/icons/EyeIcons";
 
 export default function SignUpPage() {
   const { createUser } = useLogin();
@@ -122,8 +124,11 @@ export default function SignUpPage() {
                     placeholder="Contraseña"
                   />
                   <InputRightElement h={"full"}>
-                    <Button
-                      variant={"ghost"}
+                    <IconButton
+                      size="sm"
+                      variant="ghost"
+                      aria-label="Toggle password visibility"
+                      isRound
                       tabIndex={-1}
                       onClick={() =>
                         setShowPassword((showPassword) => ({
@@ -131,13 +136,14 @@ export default function SignUpPage() {
                           password: !showPassword.password,
                         }))
                       }
-                    >
-                      {showPassword.password ? (
-                        <Icon as={AiOutlineEye} />
-                      ) : (
-                        <Icon as={AiOutlineEyeInvisible} />
-                      )}
-                    </Button>
+                      icon={
+                        showPassword.password ? (
+                          <Icon as={EyeSlashIcon} />
+                        ) : (
+                          <Icon as={EyeIcon} />
+                        )
+                      }
+                    />
                   </InputRightElement>
                 </InputGroup>
               </FormControl>
@@ -149,8 +155,11 @@ export default function SignUpPage() {
                     placeholder="Verifica contraseña"
                   />
                   <InputRightElement h={"full"}>
-                    <Button
-                      variant={"ghost"}
+                    <IconButton
+                      size="sm"
+                      variant="ghost"
+                      aria-label="Toggle password visibility"
+                      isRound
                       tabIndex={-1}
                       onClick={() =>
                         setShowPassword((showPassword) => ({
@@ -158,13 +167,14 @@ export default function SignUpPage() {
                           verification: !showPassword.verification,
                         }))
                       }
-                    >
-                      {showPassword.verification ? (
-                        <Icon as={AiOutlineEye} />
-                      ) : (
-                        <Icon as={AiOutlineEyeInvisible} />
-                      )}
-                    </Button>
+                      icon={
+                        showPassword.verification ? (
+                          <Icon as={EyeSlashIcon} />
+                        ) : (
+                          <Icon as={EyeIcon} />
+                        )
+                      }
+                    />
                   </InputRightElement>
                 </InputGroup>
               </FormControl>

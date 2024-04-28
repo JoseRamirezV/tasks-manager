@@ -4,17 +4,23 @@ import {
   FormLabel,
   HStack,
   Heading,
+  IconButton,
   Input,
   InputGroup,
   InputRightElement,
   Stack,
-  Tooltip
+  Tooltip,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { AiOutlineInfoCircle } from "react-icons/ai";
 import { toast } from "sonner";
 
-export function UpdateUserData({ currentData, STATES, updateUserData }) {
+import InfoCircle from "@/icons/InfoCircle";
+
+export default function UpdateUserData({
+  currentData,
+  STATES,
+  updateUserData,
+}) {
   const [buttonState, setButtonState] = useState(STATES.default);
   const [showHelper, setShowHelper] = useState(false);
 
@@ -38,9 +44,9 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
     const data = { ...firstToUpperCase(formData), email };
     const needsVerification = currentData.email !== email;
     if (JSON.stringify(data) === JSON.stringify(currentData)) {
-      toast.info('Hmmm', {
-        description: "No encuentro cambios a realizar 🤔"
-      })
+      toast.info("Hmmm", {
+        description: "No encuentro cambios a realizar 🤔",
+      });
       return;
     }
     setButtonState(STATES.loading);
@@ -48,7 +54,13 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
       data,
       needsVerification,
     });
-    if (error) return setButtonState(STATES.error);
+    if (error) {
+      setButtonState(STATES.error);
+      setTimeout(() => {
+        setButtonState(STATES.default);
+      }, 2000);
+      return;
+    }
     setButtonState(STATES.success);
   };
 
@@ -134,21 +146,31 @@ export function UpdateUserData({ currentData, STATES, updateUserData }) {
                 setShowHelper(e.currentTarget.value !== currentData.email);
               }}
             />
-            <Tooltip
-              label={
-                "Ten en cuenta que una vez modificado tu correo electrónico deberás volver a verificar tu cuenta"
-              }
-              rounded={"lg"}
-              px={4}
-              py={2}
-              placement="top"
-              hasArrow
-              isOpen={showHelper}
+            <InputRightElement
+              onClick={() => setShowHelper(!showHelper)}
+              boxSize={{ base: 8, sm: 10 }}
+              cursor={"pointer"}
             >
-              <InputRightElement>
-                <AiOutlineInfoCircle />
-              </InputRightElement>
-            </Tooltip>
+              <Tooltip
+                label="Ten en cuenta que una vez modificado tu correo electrónico se cerrará sesión y deberás volver a verificar tu cuenta"
+                rounded={"lg"}
+                px={3}
+                py={2}
+                placement="top"
+                isOpen={showHelper}
+                shouldWrapChildren
+                hasArrow
+              >
+                <IconButton
+                  size="sm"
+                  variant="ghost"
+                  aria-label="Mostrar advertencia de cambio de cuenta"
+                  isRound
+                  tabIndex={-1}
+                  icon={<InfoCircle />}
+                />
+              </Tooltip>
+            </InputRightElement>
           </InputGroup>
         </FormControl>
         <Button

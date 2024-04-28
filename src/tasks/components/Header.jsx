@@ -1,17 +1,19 @@
+import { AuthContext } from "@/context/AuthContext";
 import {
   Box,
   Flex,
-  Link,
-  Text,
   HStack,
-  useDisclosure,
+  Link,
   Stack,
+  Text,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { AiOutlineClose, AiOutlineLogout } from "react-icons/ai";
-import { RxHamburgerMenu } from "react-icons/rx";
 import { useContext } from "react";
 import { Link as LinkRD } from "react-router-dom";
-import { AuthContext } from "@/context/AuthContext";
+
+import LogoutIcon from "@/icons/LogoutIcon";
+import CloseIcon from "@/icons/CloseIcon";
+import BurgerIcon from "@/icons/BurgerIcon";
 
 /**
  * @function Header
@@ -33,9 +35,9 @@ export default function Header() {
       <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
         <Box display={{ md: "none" }}>
           {isOpen ? (
-            <AiOutlineClose onClick={isOpen ? onClose : onOpen} />
+            <CloseIcon boxSize={5} onClick={isOpen ? onClose : onOpen} />
           ) : (
-            <RxHamburgerMenu onClick={isOpen ? onClose : onOpen} />
+            <BurgerIcon boxSize={5} onClick={isOpen ? onClose : onOpen} />
           )}
         </Box>
         <HStack spacing={8} alignItems={"center"}>
@@ -53,7 +55,7 @@ export default function Header() {
             </Link>
           </HStack>
         </HStack>
-        <Link as={AiOutlineLogout} onClick={()=>{
+        <Link as={LogoutIcon} onClick={()=>{
           logout()
         }}></Link>
       </Flex>

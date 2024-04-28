@@ -7,11 +7,11 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { FaCircleCheck } from "react-icons/fa6";
+import CircleCheck from "@/icons/CircleCheck";
 
 export default function Hero() {
   return (
-    <VStack spacing={{base: 4, sm: 8}} flexBasis={"50%"}>
+    <VStack spacing={{ base: 4, sm: 8 }} flexBasis={"50%"}>
       <span>
         <Heading as="h1" fontSize={{ base: "3xl", md: "4xl" }}>
           <Highlight query={["Taskty.co!"]} styles={{ color: "blue.500" }}>
@@ -26,20 +26,17 @@ export default function Hero() {
           mantenerte al tanto de tus responsabilidades.
         </Text>
       </span>
-      <List
-        spacing={2}
-        w={"full"}
-      >
+      <List spacing={2} w={"full"}>
         <ListItem>
-          <ListIcon as={FaCircleCheck} color={"green.400"} />
+          <ListIcon as={CircleCheck} fill={"green.400"} />
           Mantente notificado
         </ListItem>
         <ListItem>
-          <ListIcon as={FaCircleCheck} color={"green.400"} />
+          <ListIcon as={CircleCheck} fill={"green.400"} />
           ¡Aumenta tu productividad
         </ListItem>
         <ListItem>
-          <ListIcon as={FaCircleCheck} color={"green.400"} />
+          <ListIcon as={CircleCheck} fill={"green.400"} />
           Reduce el estrés
         </ListItem>
       </List>
