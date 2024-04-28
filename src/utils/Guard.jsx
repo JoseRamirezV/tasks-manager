@@ -1,17 +1,16 @@
 import { verifyToken } from "@/auth/services/users";
 import { AuthContext } from "@/context/AuthContext";
-import Cookies from "js-cookie";
 import { useContext, useEffect } from "react";
-import { Navigate, useNavigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 
 export default function Guard() {
-  const { login, logout } = useContext(AuthContext);
-  const { token } = Cookies.get();
+  const { login, logout, isLogged } = useContext(AuthContext);
+  const token = window.localStorage.getItem("token");
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     (async () => {
-      if (!token) return logout();
+      if (!token) return isLogged && logout();
       try {
         const res = await verifyToken();
         if (!res) throw new Error("Hubo una falla de conexión con el servidor");

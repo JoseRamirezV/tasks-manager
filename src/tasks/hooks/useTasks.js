@@ -5,13 +5,13 @@ import {
   deleteTasks as serviceDeleteTasks,
   updateTask,
 } from "@/tasks/services/tasks";
-import { useContext, useEffect, useState } from "react";
-import { toast } from "sonner";
-import moment from "moment";
 import { validateDates } from "@/tasks/utils/datesValidator";
+import moment from "moment";
+import { useContext, useState } from "react";
+import { toast } from "sonner";
 
 const useTasks = () => {
-  const { email, token, verified, logout } = useContext(AuthContext);
+  const { email, verified, logout } = useContext(AuthContext);
   const [data, setData] = useState([]);
   const [checkedItems, setCheckedItems] = useState([
     {
@@ -19,22 +19,20 @@ const useTasks = () => {
       checked: false,
     },
   ]);
-  useEffect(() => {
-    if (email !== "") getTasks();
-  }, [email]);
 
   const getTasks = async () => {
-    const {userTasks, error} = await getUserTasks(email, token);
+    const { userTasks, error } = await getUserTasks(email);
 
-    if (error === '401') return toast.error("Error",{
-      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
-      onDismiss: () => logout(),
-      onAutoClose: () => logout()
-    });
+    if (error === "401")
+      return toast.error("Error", {
+        description: "Acceso no autorizado, por favor vuelva a iniciar sesión",
+        onDismiss: () => logout(),
+        onAutoClose: () => logout(),
+      });
 
     if (error) return triggerToast(error);
 
-    if(JSON.stringify(userTasks) === JSON.stringify(data)) return
+    if (JSON.stringify(userTasks) === JSON.stringify(data)) return;
     setData(userTasks);
     setCheckedItems(
       new Array(userTasks.length).fill({
@@ -67,15 +65,15 @@ const useTasks = () => {
       triggerToast
     );
     if (!validDates) return {};
-
     newTask.limitDate = limitDate;
 
-    const { task: savedTask, error } = await addNewTask(newTask, token);
-    if (error === '401') return toast.error("Error",{
-      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
-      onDismiss: () => logout(),
-      onAutoClose: () => logout()
-    });
+    const { task: savedTask, error } = await addNewTask(newTask);
+    if (error === "401")
+      return toast.error("Error", {
+        description: "Acceso no autorizado, por favor vuelva a iniciar sesión",
+        onDismiss: () => logout(),
+        onAutoClose: () => logout(),
+      });
 
     if (error) {
       triggerToast(error);
@@ -118,12 +116,13 @@ const useTasks = () => {
 
     if (!validDates) return {};
     newData.limitDate = limitDate;
-    const { error, task } = await updateTask(_id, newData, token);
-    if (error === '401') return toast.error("Error",{
-      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
-      onDismiss: () => logout(),
-      onAutoClose: () => logout()
-    });
+    const { error, task } = await updateTask(_id, newData);
+    if (error === "401")
+      return toast.error("Error", {
+        description: "Acceso no autorizado, por favor vuelva a iniciar sesión",
+        onDismiss: () => logout(),
+        onAutoClose: () => logout(),
+      });
     if (error) {
       triggerToast(error);
       return {};
@@ -139,17 +138,18 @@ const useTasks = () => {
     return { ok: "Created" };
   };
 
-  const deleteTasks = () => {
+  const deleteTasks = async () => {
     const tasksToDelete = checkedItems.reduce((acc, item) => {
       if (item.checked) acc.push(item.id);
       return acc;
     }, []);
-    const { error } = serviceDeleteTasks(tasksToDelete, token);
-    if (error === '401') return toast.error("Error",{
-      description: 'Acceso no autorizado, por favor vuelva a iniciar sesión',
-      onDismiss: () => logout(),
-      onAutoClose: () => logout()
-    });
+    const { error } = await serviceDeleteTasks(tasksToDelete);
+    if (error === "401")
+      return toast.error("Error", {
+        description: "Acceso no autorizado, por favor vuelva a iniciar sesión",
+        onDismiss: () => logout(),
+        onAutoClose: () => logout(),
+      });
     if (error) return;
     setData([...data.filter((task) => !tasksToDelete.includes(task._id))]);
     checkAllItems(false);
@@ -188,6 +188,7 @@ const useTasks = () => {
     checkAllItems,
     checkedItems,
     data,
+    email,
   };
 };
 

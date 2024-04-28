@@ -1,57 +1,77 @@
 const BASE_URL = `${import.meta.env.VITE_BACKEND_URL}/users`;
 
+const getToken = () => window.localStorage.getItem("token");
+
 export const login = async (email, password) => {
-  const res = await fetch(`${BASE_URL}/${email}&${password}`, {
-    credentials: "include",
-  });
-  const { user, error } = await res.json();
-  if (!user) return { error };
-  return { userData: user };
+  try {
+    const res = await fetch(`${BASE_URL}/${email}&${password}`);
+    if (!res) throw new Error("No pudimos conectar con el servidor");
+    const { user, error, token } = await res.json();
+    if (error) throw new Error(error);
+    window.localStorage.setItem("token", token);
+    return { userData: user };
+  } catch (error) {
+    console.log(error)
+    if(error instanceof TypeError) return {error: "Algo salió mal..."}
+    return { error: error.message };
+  }
 };
 
 export const signUp = async (data) => {
-  const temporalToken = generateTemporalToken();
-  const res = await fetch(`${BASE_URL}/signUp`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      ...data,
-      temporalToken,
-      verificationUrl: `${window.location.origin}/tasks-manager/#/auth/verify-account?email=${data.email}&token=${temporalToken}`,
-    }),
-  });
-  return await res.json();
+  try {
+    const temporalToken = generateTemporalToken();
+    const res = await fetch(`${BASE_URL}/signUp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...data,
+        temporalToken,
+        verificationUrl: `${window.location.origin}/#/auth/verify-account?email=${data.email}&token=${temporalToken}`,
+      }),
+    });
+    if (!res.ok) throw new Error("No pudimos conectar con el servidor");
+    const { success, error } = await res.json();
+    if (error) throw new Error(error);
+    return { success };
+  } catch (error) {
+    return { error: error.message };
+  }
 };
 
 export const update = async ({ _id, data, needsVerification }) => {
-  if (needsVerification) {
-    needsVerification.temporalToken = generateTemporalToken();
-    needsVerification.verificationUrl = `${window.location.origin}/auth/verify-account?email=${data.email}&token=${needsVerification.temporalToken}`;
+  try {
+    if (needsVerification) {
+      needsVerification.temporalToken = generateTemporalToken();
+      needsVerification.verificationUrl = `${window.location.origin}/#/auth/verify-account?email=${data.email}&token=${needsVerification.temporalToken}`;
+    }
+    const res = await fetch(`${BASE_URL}/update/${_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ ...data, needsVerification }),
+    });
+    if (!res) throw new Error("No pudimos conectar con el servidor");
+    const { user, error } = await res.json();
+    if (error) throw new Error(error);
+    return { user };
+  } catch (error) {
+    return { error: error.message };
   }
-  const res = await fetch(`${BASE_URL}/update/${_id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ ...data, needsVerification }),
-  });
-  return await res.json();
 };
 
 export const deleteUser = async ({ _id, password }) => {
   try {
-    await new Promise((resolve) =>
-      setTimeout(() => {
-        resolve();
-      }, 3000)
-    );
     const res = await fetch(`${BASE_URL}/delete/${_id}&${password}`, {
       method: "DELETE",
-      credentials: "include",
+      headers: {
+        authorization: `Bearer ${getToken()}`,
+      },
     });
+    if (!res.ok) throw new Error("No pudimos conectar con el servidor");
     const { ok, error } = await res.json();
     if (error) throw new Error(error);
     return { ok };
@@ -61,16 +81,22 @@ export const deleteUser = async ({ _id, password }) => {
 };
 
 export const changePassword = async ({ _id, oldPassword, newPassword }) => {
-  const res = await fetch(`${BASE_URL}/change-password/${_id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify({ oldPassword, newPassword }),
-  });
-  const status = await res.json();
-  return status;
+  try {
+    const res = await fetch(`${BASE_URL}/change-password/${_id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${getToken()}`,
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+    if (!res) throw new Error("No pudimos conectar con el servidor");
+    const { ok, error} = await res.json();
+    if(error) throw new Error(error)
+    return { ok };
+  } catch (error) {
+    return { error: error.message };
+  }
 };
 
 export const passwordRecovery = async ({ email, code, newPassword }) => {
@@ -84,6 +110,7 @@ export const passwordRecovery = async ({ email, code, newPassword }) => {
       },
       body: JSON.stringify(body),
     });
+    if (!res.ok) throw new Error("No pudimos conectar con el servidor");
     const { ok, user, error } = await res.json();
     if (error) throw new Error(error);
     return { user, ok };
@@ -93,23 +120,33 @@ export const passwordRecovery = async ({ email, code, newPassword }) => {
 };
 
 export const verifyToken = async () => {
-  const res = await fetch(`${BASE_URL}/isLogged`, {
-    credentials: "include",
-  });
-  return await res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/isLogged/${getToken()}`);
+    if (res.status === 401) throw new Error("Acceso no autorizado");
+    if (!res.ok) throw new Error("No pudimos conectar con el servidor");
+    return await res.json();
+  } catch (error) {
+    return { error: error.message };
+  }
 };
 
 export const verifyAccount = async (data) => {
-  const res = await fetch(`${BASE_URL}/verify`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    credentials: "include",
-    body: JSON.stringify(data),
-  });
-  const { invalid, user } = await res.json();
-  return { invalid, userData: user };
+  try {
+    const res = await fetch(`${BASE_URL}/verify`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (!res) throw new Error("No pudimos conectar con el servidor");
+    const { error, user, token } = await res.json();
+    if (error) throw new Error(error);
+    window.localStorage.setItem("token", token);
+    return { userData: user };
+  } catch (error) {
+    return { error: error.message };
+  }
 };
 
 const generateTemporalToken = () =>

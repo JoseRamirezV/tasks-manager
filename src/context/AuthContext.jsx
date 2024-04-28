@@ -1,4 +1,3 @@
-import Cookies from "js-cookie";
 import { createContext, useReducer } from "react";
 
 /**
@@ -44,7 +43,6 @@ function reducer(state, action) {
 
 export function AuthContextProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, InitialState);
-
   function login(userSession) {
     dispatch({
       type: "LOGIN",
@@ -53,7 +51,7 @@ export function AuthContextProvider({ children }) {
   }
 
   function logout() {
-    Cookies.remove("token");
+    window.localStorage.removeItem("token");
     dispatch({
       type: "LOGOUT",
     });

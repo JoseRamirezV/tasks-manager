@@ -1,9 +1,10 @@
-import { UpdateUserData } from "@/tasks/components/UpdateUserData";
 import { Divider, Stack } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
-import ChangePassword from "@/tasks/components/ChangePassword";
+
 import { useUser } from "@/tasks/hooks/useUser";
-import { DeleteAccount } from "@/tasks/components/DeleteAccount";
+import UpdateUserData from "@/tasks/components/UpdateUserData";
+import ChangePassword from "@/tasks/components/ChangePassword";
+import DeleteAccount from "@/tasks/components/DeleteAccount";
 
 const BUTTON_STATES = {
   default: {

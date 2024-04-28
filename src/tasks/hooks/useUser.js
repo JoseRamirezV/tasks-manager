@@ -12,7 +12,6 @@ import { toast } from "sonner";
 export const useUser = () => {
   const {
     _id,
-    token,
     firstName,
     secondName,
     firstLastName,
@@ -25,19 +24,16 @@ export const useUser = () => {
 
   const updateUserData = async ({ data, needsVerification }) => {
     if (!validateEmail(data.email)) {
-      toast.error("Error", { description: "Formato de email invalido" });
+      toast.error("Formato de email invalido");
       return { error: true };
     }
     const { user, error } = await update({
       _id,
-      token,
       data,
       needsVerification: needsVerification && { oldEmail: email },
     });
     if (error) {
-      toast.error("Error", {
-        description: error,
-      });
+      toast.error(error);
       return { error };
     }
     if (needsVerification) {
@@ -54,7 +50,7 @@ export const useUser = () => {
       });
       return { closing: true };
     }
-    login({ ...user, token });
+    login({ ...user });
     return { user };
   };
 
@@ -64,24 +60,19 @@ export const useUser = () => {
     passwordVerification,
   }) => {
     if (newPassword !== passwordVerification)
-      return toast.error("Error", {
-        description: "Los campos de contraseña nueva no coinciden",
-      });
+      return toast.error("Los campos de contraseña nueva no coinciden");
     const { ok, error } = await changePasswordService({
       _id,
-      token,
       newPassword,
       oldPassword,
     });
     if (error)
-      return toast.error("Error", {
-        description: error,
-      });
+      return toast.error(error);
     return { ok };
   };
 
   const deleteAccount = async ({ password }) => {
-    const { ok, error } = await deleteUser({ _id, token, password });
+    const { ok, error } = await deleteUser({ _id, password });
     if (ok) {
       const promise = new Promise((resolve) =>
         setTimeout(() => {
@@ -91,13 +82,11 @@ export const useUser = () => {
       toast.promise(promise, {
         loading: "Cerrando sesión...",
         success: (ok) => `${ok}, adios 😢`,
-        onAutoClose: ({ type }) => {
-          if (type === "success") logout();
-        },
+        onAutoClose: () => logout(),
       });
       return {};
     }
-    toast.error("Error", { description: error });
+    toast.error(error);
     return { error };
   };
 

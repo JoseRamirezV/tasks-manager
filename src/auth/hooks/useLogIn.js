@@ -16,9 +16,7 @@ export function useLogin() {
 
   useEffect(() => {
     if (error) {
-      toast.error("Error", {
-        description: error,
-      });
+      toast.error(error);
     }
 
     return () => {
@@ -29,9 +27,7 @@ export function useLogin() {
   const authenticateUser = async (email, password) => {
     const { userData, error } = await loginService(email, password);
     if (error) {
-      setError(
-        "Credenciales incorrectas, por favor verifique su usuario o contraseña"
-      );
+      setError(error);
       return;
     }
     login({
@@ -43,12 +39,12 @@ export function useLogin() {
   const createUser = async (data) => {
     if (data.passwordVerification !== data.password)
       return setError("Las contraseñas no coinciden");
-    const { ok, exists } = await signUp(data);
-    if (!ok) {
-      setError(exists ?? "Hubo un problema, por favor intenta mas tarde");
+    const { success, error } = await signUp(data);
+    if (error) {
+      setError(error);
       return;
     }
-    toast.info("Perfecto!", {
+    toast.info(success, {
       description:
         "Revisa tu cuenta de correo, ahí encontraras el código de activación de cuenta y estarás listo para usar Taskty",
       onDismiss: () =>
@@ -62,8 +58,6 @@ export function useLogin() {
     });
   };
 
-  const deleteUser = () => {};
-
   const forgotPassword = async ({
     email,
     code,
@@ -71,8 +65,8 @@ export function useLogin() {
     passVerification,
   }) => {
     const toastId = "validation";
-    toast.loading(code ? "Verificando..." : "Enviando...",{
-      id: toastId
+    toast.loading(code ? "Verificando..." : "Enviando...", {
+      id: toastId,
     });
     if (password !== passVerification) {
       setError("Las contraseñas no coinciden");
@@ -84,34 +78,35 @@ export function useLogin() {
       newPassword: password,
     });
     if (user) {
-      toast.success('Listo, ya puedes iniciar sesión!', {
+      toast.success("Listo, ya puedes iniciar sesión!", {
         id: toastId,
-        description: null
-      })
+        description: null,
+      });
       setTimeout(() => {
         navigate("/auth/sign-in");
       }, 2000);
-      return {}
+      return {};
     }
-    if(ok){
+    if (ok) {
       toast.info("Código enviado", {
         id: toastId,
-        description: 'Por favor revisa tu correo electrónico, ahí encontraras el código que necesitas'
-      })
-      return {}
+        description:
+          "Por favor revisa tu correo electrónico, ahí encontraras el código que necesitas",
+      });
+      return {};
     }
-    toast.error('Error',{
+    toast.error("Error", {
       id: toastId,
-      description: error
-    })
+      description: error,
+    });
     return { error };
   };
 
   const verifyAccount = async (data) => {
     const promise = () =>
       new Promise((resolve, reject) => {
-        verifyAccountService(data).then(({ userData, invalid }) => {
-          if (invalid) reject({ invalid });
+        verifyAccountService(data).then(({ userData, error }) => {
+          if (error) reject({ error });
           resolve(userData);
         });
       });
@@ -126,8 +121,7 @@ export function useLogin() {
         }, 2000);
         return "Verificado!";
       },
-      error: ({ invalid }) =>
-        invalid ?? "Parece que hubo un problema, por favor intenta mas tarde",
+      error: ({ error }) => error,
     });
   };
 
@@ -135,7 +129,6 @@ export function useLogin() {
     authenticateUser,
     createUser,
     verifyAccount,
-    deleteUser,
     forgotPassword,
   };
 }

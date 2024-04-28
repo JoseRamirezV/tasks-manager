@@ -39,14 +39,14 @@ const TASK_PLACEHOLDERS = [
 export default function TaskForm({
   isOpen,
   onClose,
-  setShowTaskForm,
   taskToEditData,
   addTask,
   editTask,
 }) {
-  const [notify, setNotify] = useState(taskToEditData?.notify || false);
-  const initialRef = useRef();
   const { email: userEmail } = useContext(AuthContext);
+  const initialRef = useRef();
+  const [notify, setNotify] = useState(taskToEditData?.notify || false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const randomPlaceholder = Math.floor(
     Math.random() * TASK_PLACEHOLDERS.length
@@ -59,6 +59,8 @@ export default function TaskForm({
       new window.FormData(form)
     );
 
+    setIsLoading(true);
+
     if (taskToEditData) {
       const { _id } = taskToEditData;
       const updatedTask = {
@@ -67,25 +69,29 @@ export default function TaskForm({
         notificationDate: notify && notificationDate,
         ...rest,
       };
-      editTask(_id, updatedTask).then(({ ok }) => {
-        if (ok) closeForm();
-      });
+      editTask(_id, updatedTask)
+        .then(({ ok }) => {
+          if (ok) closeForm();
+        })
+        .finally(() => setIsLoading(false));
     } else {
       addTask({
         userEmail,
         notify: !!notify,
         notificationDate: notify ? notificationDate : null,
         ...rest,
-      }).then(({ ok }) => {
-        if (ok) closeForm();
-      });
+      })
+        .then(({ ok }) => {
+          if (ok) closeForm();
+        })
+        .finally(() => setIsLoading(false));
     }
   };
 
   const closeForm = () => {
-    if (taskToEditData) setShowTaskForm(false);
-    setNotify(false);
     onClose();
+    if (taskToEditData && taskToEditData.notify) return;
+    setNotify(false);
   };
 
   return (
@@ -93,17 +99,18 @@ export default function TaskForm({
       isOpen={isOpen}
       onClose={closeForm}
       initialFocusRef={initialRef}
-      size={{ base: "xs", sm: "md" }}
+      size={{ base: "xs", sm: "sm", xl: "md" }}
+      preserveScrollBarGap={{ base: false, sm: true }}
       isCentered
     >
       <ModalOverlay />
       <ModalContent rounded={"xl"} p={1}>
-        <ModalHeader>{taskToEditData ? "Edit task" : "New task"}</ModalHeader>
+        <ModalHeader>{taskToEditData ? "Edición" : "Nueva tarea"}</ModalHeader>
         <ModalCloseButton />
         <form onSubmit={handleSubmit}>
           <ModalBody display={"flex"} flexDir={"column"} gap={2}>
             <FormControl isRequired>
-              <FormLabel>Task Title</FormLabel>
+              <FormLabel>Titulo</FormLabel>
               <Input
                 ref={initialRef}
                 defaultValue={taskToEditData && taskToEditData.title}
@@ -114,7 +121,7 @@ export default function TaskForm({
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Descripción</FormLabel>
               <Textarea
                 defaultValue={taskToEditData && taskToEditData.description}
                 name="description"
@@ -125,30 +132,32 @@ export default function TaskForm({
             </FormControl>
 
             <FormControl isRequired>
-              <FormLabel>Limit Date</FormLabel>
+              <FormLabel>Fecha limite</FormLabel>
               <Input
                 name="limitDate"
                 type="date"
                 defaultValue={taskToEditData?.limitDate}
-              ></Input>
+                size="sm"
+              />
             </FormControl>
 
             <FormControl isRequired={notify}>
-              <FormLabel>Notification Date</FormLabel>
+              <FormLabel>Fecha de notificación</FormLabel>
               <Input
                 name="notificationDate"
                 type="datetime-local"
+                isDisabled={!notify}
+                size="sm"
                 defaultValue={
                   notify && taskToEditData?.notificationDate
                     ? taskToEditData.notificationDate
                     : moment().format("YYYY-MM-DD HH:mm")
                 }
-                isDisabled={!notify}
-              ></Input>
+              />
             </FormControl>
           </ModalBody>
 
-          <ModalFooter gap={2}>
+          <ModalFooter gap={2} pt={2}>
             <Checkbox
               defaultChecked={notify}
               flexGrow={1}
@@ -159,13 +168,15 @@ export default function TaskForm({
               Notifícame
             </Checkbox>
             <Button
+              isLoading={isLoading}
+              loadingText="Guardando..."
               type="submit"
               colorScheme="blue"
-              size={{ base: "xs", sm: "sm" }}
+              size={{ base: "xs", sm: "md" }}
             >
               Guardar
             </Button>
-            <Button onClick={closeForm} size={{ base: "xs", sm: "sm" }}>
+            <Button onClick={closeForm} size={{ base: "xs", sm: "md" }}>
               Cancelar
             </Button>
           </ModalFooter>

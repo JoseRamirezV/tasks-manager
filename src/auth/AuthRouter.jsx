@@ -1,18 +1,17 @@
-import { Center } from "@chakra-ui/react";
+import { Center, Spinner } from "@chakra-ui/react";
 import { Navigate, Route, Routes } from "react-router-dom";
-
-import ForgotPassPage from "@/auth/pages/ForgotPassPage";
-import LoginPage from "@/auth/pages/LoginPage";
-
-import VerifyAccount from "@/auth/pages/VerifyAccount";
 import { AuthContext } from "@/context/AuthContext";
-import { useContext } from "react";
-import SignUpPage from "./pages/SignUpPage";
+import { Suspense, lazy, useContext } from "react";
+
+const ForgotPassPage = lazy(() => import("@/auth/pages/ForgotPassPage"));
+const LoginPage = lazy(() => import("@/auth/pages/LoginPage"));
+const VerifyAccount = lazy(() => import("@/auth/pages/VerifyAccount"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
 
 export default function AuthRouter() {
   const { isLogged, email } = useContext(AuthContext);
 
-  if (isLogged) return <Navigate to={'/'}/>;
+  if (isLogged) return <Navigate to={"/"} />;
 
   return (
     <Center
@@ -24,15 +23,67 @@ export default function AuthRouter() {
       bgSize={"14px 24px"}
     >
       <Routes>
-        <Route path={"forgot-my-password"} exact element={<ForgotPassPage />} />
-        <Route path={"sign-up"} exact element={<SignUpPage />} />
-        <Route path={"sign-in"} exact element={<LoginPage />} />
+        <Route
+          path={"forgot-my-password"}
+          exact
+          element={
+            <Suspense
+              fallback={
+                <Center>
+                  <Spinner />
+                </Center>
+              }
+            >
+              <ForgotPassPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path={"sign-up"}
+          exact
+          element={
+            <Suspense
+              fallback={
+                <Center>
+                  <Spinner />
+                </Center>
+              }
+            >
+              <SignUpPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path={"sign-in"}
+          exact
+          element={
+            <Suspense
+              fallback={
+                <Center>
+                  <Spinner />
+                </Center>
+              }
+            >
+              <LoginPage />
+            </Suspense>
+          }
+        />
         <Route
           path={"verify-account"}
           exact
-          element={<VerifyAccount email={email} />}
+          element={
+            <Suspense
+              fallback={
+                <Center>
+                  <Spinner />
+                </Center>
+              }
+            >
+              <VerifyAccount email={email} />
+            </Suspense>
+          }
         />
-        <Route path={"*"} exact element={<Navigate to={"sign-in"}/>} />
+        <Route path={"*"} exact element={<Navigate to={"sign-in"} />} />
       </Routes>
     </Center>
   );
